@@ -38,7 +38,7 @@ public class Card2 : MonoBehaviour
         tmpTime += Time.deltaTime;
         if (tmpTime >= 1.0f && !tmpIsOpen) // 1초가 지나고 닫힌 상태일 때,
         {
-            tmpTime = -0.2f;
+            tmpTime = -0.5f;
             tmpIsOpen = true;
             audioSource.PlayOneShot(clip);
             anim.SetBool("IsOpen", true);
@@ -46,7 +46,7 @@ public class Card2 : MonoBehaviour
         }
         else if (tmpTime >= 1.0f && tmpIsOpen) // 1초가 지나고 열린 상태일 때,
         {
-            tmpTime = 0.0f;
+            tmpTime = -0.5f;
             tmpIsOpen = false;
             front.SetActive(false);
             back.SetActive(true);
