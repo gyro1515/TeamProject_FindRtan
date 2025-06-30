@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 
 
     public Card firstCard;
-    public Card SecondCard;
+    public Card secondCard;
     public Text timeTxt;
     public GameObject endTxt;
     public int cardCount = 0;
@@ -29,10 +29,10 @@ public class GameManager : MonoBehaviour
 
     public void Matched()
     {
-        if (firstCard.idx == SecondCard.idx)
+        if (firstCard.idx == secondCard.idx)
         {
-            //firstCard.DestroyCard();
-            //SecondCard.DestroyCard();
+            firstCard.DestroyCard();
+            secondCard.DestroyCard();
             cardCount -= 2;
             if (cardCount == 0)
             {
@@ -44,13 +44,13 @@ public class GameManager : MonoBehaviour
         else
         {
             firstCard.CloseCard();
-            SecondCard.CloseCard();
+            secondCard.CloseCard();
 
 
         }
 
         firstCard = null;
-        SecondCard = null;
+        secondCard = null;
 
     }
 

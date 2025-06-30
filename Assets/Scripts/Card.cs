@@ -1,24 +1,24 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-    // Å×½ºÆ®¿ë
+    // í…ŒìŠ¤íŠ¸ìš©
     float tmpTime = 0;
     bool tmpIsOpen = false;
 
 
     public int idx = 0;
-    // ²ô°í Å³ Ä«µå ¾Õ,µÚ ¸é
+    // ë„ê³  í‚¬ ì¹´ë“œ ì•,ë’¤ ë©´
     [SerializeField] GameObject front;
     [SerializeField] GameObject back;
-    // Ä«µå ¾Ö´Ï¸ŞÀÌ¼Ç
+    // ì¹´ë“œ ì• ë‹ˆë©”ì´ì…˜
     [SerializeField] Animator anim;
-    // ¾Õ¸é ÀÌ¹ÌÁö
+    // ì•ë©´ ì´ë¯¸ì§€
     [SerializeField] SpriteRenderer frontImg;
-    // Ä«µå µÚÁı±â »ç¿îµå
+    // ì¹´ë“œ ë’¤ì§‘ê¸° ì‚¬ìš´ë“œ
     AudioSource audioSource;
     public AudioClip clip;
 
@@ -27,25 +27,25 @@ public class Card : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    public void Setting(int num) // º¸µå¿¡¼­ ¼¼ÆÃ
+    public void Setting(int num) // ë³´ë“œì—ì„œ ì„¸íŒ…
     {
         idx = num;
         //frontImg.sprite = Resources.Load<Sprite>("rtan" + idx.ToString());
         frontImg.sprite = Resources.Load<Sprite>($"rtan{idx}");
     }
-    private void Update()
+    /*private void Update()
     {
-        // Å×½ºÆ®¿ë
+        // í…ŒìŠ¤íŠ¸ìš©
         tmpTime += Time.deltaTime;
-        if (tmpTime >= 1.0f && !tmpIsOpen) // 1ÃÊ°¡ Áö³ª°í ´İÈù »óÅÂÀÏ ¶§,
+        if (tmpTime >= 1.0f && !tmpIsOpen) // 1ì´ˆê°€ ì§€ë‚˜ê³  ë‹«íŒ ìƒíƒœì¼ ë•Œ,
         {
             tmpTime = -0.2f;
             tmpIsOpen = true;
             audioSource.PlayOneShot(clip);
             anim.SetBool("IsOpen", true);
-            OpenCard();
+            OpenCardReady();
         }
-        else if(tmpTime >= 1.0f && tmpIsOpen) // 1ÃÊ°¡ Áö³ª°í ¿­¸° »óÅÂÀÏ ¶§,
+        else if(tmpTime >= 1.0f && tmpIsOpen) // 1ì´ˆê°€ ì§€ë‚˜ê³  ì—´ë¦° ìƒíƒœì¼ ë•Œ,
         {
             tmpTime = 0.0f;
             tmpIsOpen = false;
@@ -53,39 +53,39 @@ public class Card : MonoBehaviour
             back.SetActive(true);
             anim.SetBool("IsOpen", false);
         }
-    }
-    // °ÔÀÓ ¸Å´ÏÀú¾À¿¡¼­ °¡Á®¿Í¾ß ÇÔ
-    /*public void OpenCard()
+    }*/
+    // ê²Œì„ ë§¤ë‹ˆì €ì”¬ì—ì„œ ê°€ì ¸ì™€ì•¼ í•¨
+    public void OpenCard()
     {
-        // °ÔÀÓ ÁßÀÌ ¾Æ´Ï¶ó¸é µ¿ÀÛ ±İÁö
-        if (GameManager.instance.gameStep != GameManager.GAMESTEP.STARTGAME) return;
+        // ê²Œì„ ì¤‘ì´ ì•„ë‹ˆë¼ë©´ ë™ì‘ ê¸ˆì§€
+        //if (GameManager.instance.gameStep != GameManager.GAMESTEP.STARTGAME) return;
 
-        //PlayOneShot()À» »ç¿ëÇÏ¸é ´Ù¸¥ È¿°úÀ½³¢¸® °ãÄ¡Áö ¾ÊÀ½
+        //PlayOneShot()ì„ ì‚¬ìš©í•˜ë©´ ë‹¤ë¥¸ íš¨ê³¼ìŒë¼ë¦¬ ê²¹ì¹˜ì§€ ì•ŠìŒ
         audioSource.PlayOneShot(clip);
         anim.SetBool("IsOpen", true);
         back.SetActive(false);
         front.SetActive(true);
 
-        // ¸¸¾à fisrstCard°¡ ºñ¾ú´Ù¸é
-        if (GameManager.instance.fisrstCard == null)
+        // ë§Œì•½ fisrstCardê°€ ë¹„ì—ˆë‹¤ë©´
+        if (GameManager.instance.firstCard == null)
         {
-            // ÀÌ Ä«µåÀÇ Á¤º¸¸¦ ³Ñ°ÜÁÖ°í
-            GameManager.instance.fisrstCard = this;
+            // ì´ ì¹´ë“œì˜ ì •ë³´ë¥¼ ë„˜ê²¨ì£¼ê³ 
+            GameManager.instance.firstCard = this;
         }
-        // ¸¸¾à fisrstCard°¡ Ã¡´Ù¸é
+        // ë§Œì•½ fisrstCardê°€ ì°¼ë‹¤ë©´
         else
         {
-            // secondCard¿¡ ÀÌ Ä«µå Á¤º¸¸¦ ³Ñ°ÜÁØ´Ù.
+            // secondCardì— ì´ ì¹´ë“œ ì •ë³´ë¥¼ ë„˜ê²¨ì¤€ë‹¤.
             GameManager.instance.secondCard = this;
-            // ±× ÈÄ Mached() È£Ãâ
+            // ê·¸ í›„ Mached() í˜¸ì¶œ
             GameManager.instance.Matched();
         }
-    }*/
-    public void DestoryCard()
-    {
-        Invoke("DestoryCardInvoke", 1.0f);
     }
-    public void DestoryCardInvoke()
+    public void DestroyCard()
+    {
+        Invoke("DestroyCardInvoke", 1.0f);
+    }
+    public void DestroyCardInvoke()
     {
         Destroy(gameObject);
     }
@@ -101,7 +101,7 @@ public class Card : MonoBehaviour
         anim.SetBool("IsOpen", false);
     }
 
-    public void OpenCard()
+    public void OpenCardReady()
     {
         Invoke("OpenCardInvoke", 0.2f);
     }
