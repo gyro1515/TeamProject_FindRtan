@@ -6,8 +6,8 @@ using UnityEngine;
 public class Card : MonoBehaviour
 {
     // 테스트용
-    float tmpTime = 0;
-    bool tmpIsOpen = false;
+    //float tmpTime = 0;
+    //bool tmpIsOpen = false;
 
 
     public int idx = 0;
