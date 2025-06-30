@@ -1,24 +1,23 @@
-ï»¿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class Card : MonoBehaviour
+public class Card2 : MonoBehaviour
 {
-    // í…ŒìŠ¤íŠ¸ìš©
-    //float tmpTime = 0;
-    //bool tmpIsOpen = false;
+    // Å×½ºÆ®¿ë
+    float tmpTime = 0;
+    bool tmpIsOpen = false;
 
 
     public int idx = 0;
-    // ë„ê³  í‚¬ ì¹´ë“œ ì•,ë’¤ ë©´
+    // ²ô°í Å³ Ä«µå ¾Õ,µÚ ¸é
     [SerializeField] GameObject front;
     [SerializeField] GameObject back;
-    // ì¹´ë“œ ì• ë‹ˆë©”ì´ì…˜
+    // Ä«µå ¾Ö´Ï¸ŞÀÌ¼Ç
     [SerializeField] Animator anim;
-    // ì•ë©´ ì´ë¯¸ì§€
+    // ¾Õ¸é ÀÌ¹ÌÁö
     [SerializeField] SpriteRenderer frontImg;
-    // ì¹´ë“œ ë’¤ì§‘ê¸° ì‚¬ìš´ë“œ
+    // Ä«µå µÚÁı±â »ç¿îµå
     AudioSource audioSource;
     public AudioClip clip;
 
@@ -27,25 +26,25 @@ public class Card : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    public void Setting(int num) // ë³´ë“œì—ì„œ ì„¸íŒ…
+    public void Setting(int num) // º¸µå¿¡¼­ ¼¼ÆÃ
     {
         idx = num;
         //frontImg.sprite = Resources.Load<Sprite>("rtan" + idx.ToString());
         frontImg.sprite = Resources.Load<Sprite>($"rtan{idx}");
     }
-    /*private void Update()
+    private void Update()
     {
-        // í…ŒìŠ¤íŠ¸ìš©
+        // Å×½ºÆ®¿ë
         tmpTime += Time.deltaTime;
-        if (tmpTime >= 1.0f && !tmpIsOpen) // 1ì´ˆê°€ ì§€ë‚˜ê³  ë‹«íŒ ìƒíƒœì¼ ë•Œ,
+        if (tmpTime >= 1.0f && !tmpIsOpen) // 1ÃÊ°¡ Áö³ª°í ´İÈù »óÅÂÀÏ ¶§,
         {
             tmpTime = -0.2f;
             tmpIsOpen = true;
             audioSource.PlayOneShot(clip);
             anim.SetBool("IsOpen", true);
-            OpenCardReady();
+            //OpenCardReady();
         }
-        else if(tmpTime >= 1.0f && tmpIsOpen) // 1ì´ˆê°€ ì§€ë‚˜ê³  ì—´ë¦° ìƒíƒœì¼ ë•Œ,
+        else if (tmpTime >= 1.0f && tmpIsOpen) // 1ÃÊ°¡ Áö³ª°í ¿­¸° »óÅÂÀÏ ¶§,
         {
             tmpTime = 0.0f;
             tmpIsOpen = false;
@@ -53,34 +52,34 @@ public class Card : MonoBehaviour
             back.SetActive(true);
             anim.SetBool("IsOpen", false);
         }
-    }*/
-    // ê²Œì„ ë§¤ë‹ˆì €ì”¬ì—ì„œ ê°€ì ¸ì™€ì•¼ í•¨
-    public void OpenCard()
+    }
+    // °ÔÀÓ ¸Å´ÏÀú¾À¿¡¼­ °¡Á®¿Í¾ß ÇÔ
+    /*public void OpenCard()
     {
-        // ê²Œì„ ì¤‘ì´ ì•„ë‹ˆë¼ë©´ ë™ì‘ ê¸ˆì§€
+        // °ÔÀÓ ÁßÀÌ ¾Æ´Ï¶ó¸é µ¿ÀÛ ±İÁö
         //if (GameManager.instance.gameStep != GameManager.GAMESTEP.STARTGAME) return;
 
-        //PlayOneShot()ì„ ì‚¬ìš©í•˜ë©´ ë‹¤ë¥¸ íš¨ê³¼ìŒë¼ë¦¬ ê²¹ì¹˜ì§€ ì•ŠìŒ
+        //PlayOneShot()À» »ç¿ëÇÏ¸é ´Ù¸¥ È¿°úÀ½³¢¸® °ãÄ¡Áö ¾ÊÀ½
         audioSource.PlayOneShot(clip);
         anim.SetBool("IsOpen", true);
         back.SetActive(false);
         front.SetActive(true);
 
-        // ë§Œì•½ fisrstCardê°€ ë¹„ì—ˆë‹¤ë©´
+        // ¸¸¾à fisrstCard°¡ ºñ¾ú´Ù¸é
         if (GameManager.instance.firstCard == null)
         {
-            // ì´ ì¹´ë“œì˜ ì •ë³´ë¥¼ ë„˜ê²¨ì£¼ê³ 
+            // ÀÌ Ä«µåÀÇ Á¤º¸¸¦ ³Ñ°ÜÁÖ°í
             GameManager.instance.firstCard = this;
         }
-        // ë§Œì•½ fisrstCardê°€ ì°¼ë‹¤ë©´
+        // ¸¸¾à fisrstCard°¡ Ã¡´Ù¸é
         else
         {
-            // secondCardì— ì´ ì¹´ë“œ ì •ë³´ë¥¼ ë„˜ê²¨ì¤€ë‹¤.
+            // secondCard¿¡ ÀÌ Ä«µå Á¤º¸¸¦ ³Ñ°ÜÁØ´Ù.
             GameManager.instance.secondCard = this;
-            // ê·¸ í›„ Mached() í˜¸ì¶œ
+            // ±× ÈÄ Mached() È£Ãâ
             GameManager.instance.Matched();
         }
-    }
+    }*/
     public void DestroyCard()
     {
         Invoke("DestroyCardInvoke", 1.0f);
