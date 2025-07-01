@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
     {
         bgmAudioSource.clip = normalBGM;
         bgmAudioSource.loop = true;
+        bgmAudioSource.volume = 0.3f;
         bgmAudioSource.Play();
     }
 
