@@ -59,7 +59,7 @@ public class Card : MonoBehaviour
     public void OpenCard()
     {
         // 게임 중이 아니라면 동작 금지
-        //if (GameManager.instance.gameStep != GameManager.GAMESTEP.STARTGAME) return;
+        if (GameManager.instance.progress != GameManager.GameProgress.StartGame) return;
 
         //PlayOneShot()을 사용하면 다른 효과음끼리 겹치지 않음
         audioSource.PlayOneShot(clip);
