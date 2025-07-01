@@ -262,6 +262,7 @@ MonoBehaviour:
   timeTxt: {fileID: 920264287}
   endTxt: {fileID: 0}
   cardCount: 10
+  time: 20
 --- !u!4 &374919622
 Transform:
   m_ObjectHideFlags: 0

@@ -15,11 +15,11 @@ public class Card : MonoBehaviour
     [SerializeField] GameObject front;
     [SerializeField] GameObject back;
     // 카드 애니메이션
-    [SerializeField] Animator anim;
+    [SerializeField] public Animator anim;
     // 앞면 이미지
     [SerializeField] SpriteRenderer frontImg;
     // 카드 뒤집기 사운드
-    AudioSource audioSource;
+    protected AudioSource audioSource;
     public AudioClip clip;
 
     private void Start()
@@ -32,7 +32,7 @@ public class Card : MonoBehaviour
         idx = num;
         frontImg.sprite = Resources.Load<Sprite>(idx.ToString());
         //frontImg.sprite = Resources.Load<Sprite>($"{idx}");
-        Debug.Log("card setting");
+        //Debug.Log("card setting");
     }
     /*private void Update()
     {
@@ -56,7 +56,7 @@ public class Card : MonoBehaviour
         }
     }*/
     // 게임 매니저씬에서 가져와야 함
-    public void OpenCard()
+    public virtual void OpenCard()
     {
         // 게임 중이 아니라면 동작 금지
         if (GameManager.instance.progress != GameManager.GameProgress.StartGame) return;
@@ -91,11 +91,11 @@ public class Card : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void CloseCard()
+    public virtual void CloseCard()
     {
         Invoke("CloseCardInvoke", 1.0f);
     }
-    public void CloseCardInvoke()
+    public virtual void CloseCardInvoke()
     {
         front.SetActive(false);
         back.SetActive(true);

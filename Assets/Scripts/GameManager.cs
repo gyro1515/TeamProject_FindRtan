@@ -18,7 +18,8 @@ public class GameManager : MonoBehaviour
     public Text timeTxt;
     public GameObject endTxt;
     public int cardCount = 10;
-    float time = 30.0f;
+    // 엔진에서 시간 설정하기
+    public float time = 30.0f;
     private void Awake()
     {
         if (instance == null)
@@ -33,8 +34,11 @@ public class GameManager : MonoBehaviour
         switch (progress)
         {
             case GameProgress.EndGame:
-                SceneManager.LoadScene("GameOverScene");
-                Debug.Log("End");
+                time += Time.deltaTime;
+                if (time >= 1.2f)
+                {
+                    SceneManager.LoadScene("GameOverScene");
+                }
                 break;
             case GameProgress.StartGame:
                 time -= Time.deltaTime;
@@ -67,7 +71,9 @@ public class GameManager : MonoBehaviour
             {
                 progress = GameProgress.EndGame;
                 //Time.timeScale = 0.0f;
-                endTxt.SetActive(false);
+                // 넘어가는 유예시간 주기
+                time = 0.0f;
+                //endTxt.SetActive(false);
             }
 
         }
