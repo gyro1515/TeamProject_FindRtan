@@ -9,8 +9,13 @@ public class GameManager : MonoBehaviour
 
     public enum GameProgress
     {
-        EndGame, StartGame, Failed
+        EndGame, StartGame, Failed, NextStage
     }
+    //스테이지 변수 추가
+    public int currentStageIndex = 0; // 0번부터 시작, 빌드 세팅 순서에 맞게
+    public int totalStageCount = 2; // 전체 스테이지 개수
+    //panel 변수 추가
+    public GameObject selectPanel; // 인스펙터에서 스테이지 판넬 오브젝트 할당
 
     public GameProgress progress = GameProgress.StartGame;
     public Card firstCard;
@@ -49,6 +54,12 @@ public class GameManager : MonoBehaviour
             case GameProgress.Failed:   
                 Retry.gameObject.SetActive(true);
                 break;
+            case GameProgress.NextStage:
+                //다음 스테이지 이름이 "MainScene1", "MainScene2"
+                int nextStage = currentStageIndex + 1;
+                string nextSceneName = "MainScene"+ nextStage;
+                SceneManager.LoadScene(nextSceneName);
+                break;
             default:
                 break;
         }
@@ -65,11 +76,17 @@ public class GameManager : MonoBehaviour
             Debug.Log($"End{cardCount}");
             if (cardCount == 0)
             {
-                progress = GameProgress.EndGame;
-                //Time.timeScale = 0.0f;
-                endTxt.SetActive(false);
+                // 마지막 스테이지인지 체크
+                progress = GameProgress.NextStage;
+                // 다음 스테이지 해금
+                PlayerPrefs.SetInt("StageUnlocked_" + (currentStageIndex + 1), 1);
+                PlayerPrefs.Save();
+                // 클리어 판넬 활성화
+                if (selectPanel != null) selectPanel.SetActive(true);
+                //게임 진행을 멈추고 싶으면
+                Time.timeScale = 0.0f;
             }
-
+            
         }
         else
         {
@@ -83,7 +100,12 @@ public class GameManager : MonoBehaviour
         secondCard = null;
 
     }
-
     
+    
+    public bool IsStageUnlocked(int stageIndex)
+    {
+        if (stageIndex == 0) return true;
+        return PlayerPrefs.GetInt("StageUnlocked_"+ stageIndex, 0) == 1;
+    }
     
 }

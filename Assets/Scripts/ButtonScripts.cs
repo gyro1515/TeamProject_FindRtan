@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class ButtonScripts : MonoBehaviour
 {
-
+    
     public void StartToMain1()
     {
         SceneManager.LoadScene("MainScene1");
@@ -13,6 +13,7 @@ public class ButtonScripts : MonoBehaviour
     {
         SceneManager.LoadScene("MainScene2");
     }
+   
     public void MainToGameOver()
     {
         SceneManager.LoadScene("GameOverScene");
@@ -21,8 +22,15 @@ public class ButtonScripts : MonoBehaviour
     {
         SceneManager.LoadScene("StartScene");
     }
-        
-    
+
+    // 추가: 다음 스테이지로 이동
+    public void GoToNextStage()
+    {
+        // GameManager의 currentStageIndex 값 사용
+        int nextStage = GameManager.instance.currentStageIndex + 1;
+        string nextSceneName = "MainScene" + nextStage;
+        SceneManager.LoadScene(nextSceneName);
+    }
 
 
 
