@@ -30,8 +30,9 @@ public class Card : MonoBehaviour
     public void Setting(int num) // 보드에서 세팅
     {
         idx = num;
-        //frontImg.sprite = Resources.Load<Sprite>("rtan" + idx.ToString());
-        frontImg.sprite = Resources.Load<Sprite>($"rtan{idx}");
+        frontImg.sprite = Resources.Load<Sprite>(idx.ToString());
+        //frontImg.sprite = Resources.Load<Sprite>($"{idx}");
+        Debug.Log("card setting");
     }
     /*private void Update()
     {
