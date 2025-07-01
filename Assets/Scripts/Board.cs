@@ -77,7 +77,7 @@ public class Board : MonoBehaviour
         startV2.Reverse();
 
         // 날아가는 시간 세팅
-        cardTotalTime = cardTime * 9 + 1.0f; // 카드 날리는 간격 * 카드 인덱스 수 + 1초만큼(현재 1초동안 날아감)
+        cardTotalTime = cardTime * 9 + 1.0f; // 카드 날리는 간격 * 카드 인덱스만큼 + 1초(현재 1초동안 날아감)
     }
 
     // Update is called once per frame
@@ -95,8 +95,8 @@ public class Board : MonoBehaviour
                 // 실제 보간용 float 변수
                 float tmpLerpTime = lerpTime - cardTime * i;
                 // Ease Out 효과 주기
-                float t = Mathf.Clamp01(tmpLerpTime);
-                float easedOut = 1f - (1f - t) * (1f - t);
+                float t = Mathf.Clamp01(tmpLerpTime); // 1을 넘어가면 오류난다
+                float easedOut = 1 - Mathf.Pow(1 - t, 2); // 기본은 제곱, 제곱 수 올릴 수록 처음에 빠르고, 마지막에 느려짐
                 // 위치 보간하여 이동하기
                 //tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], tmpLerpTime);
                 tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], easedOut);
