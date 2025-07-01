@@ -69,6 +69,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 810d4cb4a45288b408d985e50ad5b382, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardState: 0
+  backCanvas: {fileID: 9059911469794182655}
+  backSprite: {fileID: 7328927374879958078}
   idx: 0
   front: {fileID: 2639446918470260962}
   back: {fileID: 5798053476251024350}

@@ -28,7 +28,8 @@ public class Board : MonoBehaviour
     void Start()
     {
         sound = GetComponent<AudioSource>();
-        sound.pitch = pitchSpeed;
+        if (sound != null ) sound.pitch = pitchSpeed;
+        
         int[] arr = { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5 };
         for (int i = arr.Length - 1; i > 0; i--)
         {
@@ -52,7 +53,6 @@ public class Board : MonoBehaviour
         startRot = new List<float>();
         tmpG = new List<GameObject>();
         
-        tmpG.Reverse();
         for (int i = 0; i < 10; i++)
         {
             tmpG.Add(Instantiate(card, this.transform));
@@ -68,16 +68,22 @@ public class Board : MonoBehaviour
             //go.transform.rotation = Quaternion.Euler(0f, 0f, (float)i * 4);
             tmpG[i].GetComponent<Card>().Setting(arr[i]);
             tmpG[i].GetComponent<Card>().anim.speed = 0f;
+            // 첫번째 카드가 가장 위로 가게 하기
+            tmpG[i].GetComponent<Card>().backSprite.sortingOrder = 20 - i;
+            tmpG[i].GetComponent<Card>().backCanvas.sortingOrder = 20 - i;
         }
+        // 위치 정보 뒤집어서 먼 곳부터 날리기, 
+        endV2.Reverse();
+        startV2.Reverse();
 
         // 날아가는 시간 세팅
-        cardTotalTime = cardTime * 9 + 1.0f; // 카드 인덱스 수 + 1초만큼
+        cardTotalTime = cardTime * 9 + 1.0f; // 카드 날리는 간격 * 카드 인덱스 수 + 1초만큼(현재 1초동안 날아감)
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (lerpTime <= cardTotalTime && lerpTime >= 0.0f)
+        if (lerpTime >= 0.0f)
         {
             lerpTime += Time.deltaTime;
             // 뿌려보기
@@ -91,17 +97,19 @@ public class Board : MonoBehaviour
                 tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], tmpLerpTime);
                 float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], tmpLerpTime); // 두 바퀴 회전 용
                 float nextZ = startRot[i] + angleOffset;
-                tmpG[i].transform.localRotation = Quaternion.Euler(0f, 0f, nextZ);
+                //tmpG[i].transform.localRotation = Quaternion.Euler(0f, 0f, nextZ);
+                tmpG[i].transform.localEulerAngles = new Vector3(0f, 0f, nextZ);
+                //tmpG[i].transform.eulerAngles = new Vector3(0f, 0f, nextZ);
             }
-        }
-        else if (lerpTime > cardTotalTime)
-        {
-            lerpTime = -1f;
-            for (int i = 0; i < 10; i++)
+            if (lerpTime > cardTotalTime)
             {
-                tmpG[i].GetComponent<Card>().anim.speed = 1.0f;
-                tmpG[i].GetComponent<Card>().cardState = Card.CardState.Ready;
+                lerpTime = -1f; // 업데이트 방지용
+                for (int i = 0; i < 10; i++)
+                {
+                    tmpG[i].GetComponent<Card>().anim.speed = 1.0f;
+                    tmpG[i].GetComponent<Card>().cardState = Card.CardState.Ready;
+                }
             }
-        }
+        } 
     }
 }

@@ -10,7 +10,9 @@ public class Card : MonoBehaviour
         Fly, Ready
     }
     public CardState cardState = CardState.Fly;
-
+    // 오더 인 레이어도 수정해보기
+    [SerializeField] public Canvas backCanvas;
+    [SerializeField] public SpriteRenderer backSprite;
 
     public int idx = 0;
     // 끄고 킬 카드 앞,뒤 면
@@ -38,27 +40,7 @@ public class Card : MonoBehaviour
         //frontImg.sprite = Resources.Load<Sprite>($"{idx}");
         //Debug.Log("card setting");
     }
-    /*private void Update()
-    {
-        // 테스트용
-        tmpTime += Time.deltaTime;
-        if (tmpTime >= 1.0f && !tmpIsOpen) // 1초가 지나고 닫힌 상태일 때,
-        {
-            tmpTime = -0.2f;
-            tmpIsOpen = true;
-            audioSource.PlayOneShot(clip);
-            anim.SetBool("IsOpen", true);
-            OpenCardReady();
-        }
-        else if(tmpTime >= 1.0f && tmpIsOpen) // 1초가 지나고 열린 상태일 때,
-        {
-            tmpTime = 0.0f;
-            tmpIsOpen = false;
-            front.SetActive(false);
-            back.SetActive(true);
-            anim.SetBool("IsOpen", false);
-        }
-    }*/
+
     // 게임 매니저씬에서 가져와야 함
     public virtual void OpenCard()
     {

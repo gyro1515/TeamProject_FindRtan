@@ -6,7 +6,9 @@ public class Retry : MonoBehaviour
 {
     public void RetryButton()
     {
-        SceneManager.LoadScene("MainScene");
+        //SceneManager.LoadScene("MainScene");
+        // 원진씬 테스트용
+        SceneManager.LoadScene("WonJinScene");
     }
 
 
