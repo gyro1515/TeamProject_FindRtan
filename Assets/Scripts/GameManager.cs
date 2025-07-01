@@ -91,7 +91,6 @@ public class GameManager : MonoBehaviour
         {
             bgmAudioSource.Stop();
             bgmAudioSource.clip = normalBGM;
-            bgmAudioSource.volume = 0.3f;
             bgmAudioSource.Play();
             isWarningBGMPlaying = false;
         }
