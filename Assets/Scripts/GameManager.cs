@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour
                 // 마지막 스테이지인지 체크
                 progress = GameProgress.NextStage;
                 // 다음 스테이지 해금
-                PlayerPrefs.SetInt("StageUnlocked_" + (currentStageIndex + 1), 1);
+                PlayerPrefs.SetInt("StageUnlocked_1", 1); // (currentStageIndex + 1)
                 PlayerPrefs.Save();
 
                 //1초 딜레이 후 판넬 활성화(코루틴사용)

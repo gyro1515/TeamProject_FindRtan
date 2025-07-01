@@ -7,6 +7,6 @@ public class Stage : MonoBehaviour
 {
    public void StartToMain()
     {
-        SceneManager.LoadScene("MainScene");
+        SceneManager.LoadScene("MainScene1");
     }
 }

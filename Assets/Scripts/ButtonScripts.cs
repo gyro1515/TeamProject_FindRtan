@@ -38,6 +38,10 @@ public class ButtonScripts : MonoBehaviour
         SceneManager.LoadScene("GameOverScene");
     }
 
-
+    public void GoToStageSelect()
+    {
+        Time.timeScale = 1.0f; //»§Ω√ ∏ÿ√Á¿÷¥Ÿ∏È ¿Á∞≥
+        SceneManager.LoadScene("StageScene");
+    }
 
 }
