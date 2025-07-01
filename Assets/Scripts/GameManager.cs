@@ -6,12 +6,13 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
 
+
     public Card firstCard;
     public Card secondCard;
     public Text timeTxt;
     public GameObject endTxt;
     public int cardCount = 0;
-    float time = 0.0f;
+    float time = 5.0f;
     private void Awake()
     {
         if (instance == null)
@@ -23,8 +24,9 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        time += Time.deltaTime;
+        time -= Time.deltaTime;
         timeTxt.text = time.ToString("N2");
+
     }
 
     public void Matched()
