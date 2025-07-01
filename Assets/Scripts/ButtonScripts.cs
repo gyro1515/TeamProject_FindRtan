@@ -4,7 +4,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class ButtonScripts : MonoBehaviour
 {
-    
+    public void SelectToStage()
+    {
+        SceneManager.LoadScene("StageScene");
+    }
+
+
+
     public void StartToMain1()
     {
         SceneManager.LoadScene("MainScene1");
