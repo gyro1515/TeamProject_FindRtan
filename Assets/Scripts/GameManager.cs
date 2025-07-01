@@ -109,6 +109,9 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1f); // 1초 대기
         if (selectPanel != null) selectPanel.SetActive(true);
         Time.timeScale = 0.0f; // 게임 멈춤
+
+        //Scene 전환방식(예: StageScene으로)
+       
     }
 
 

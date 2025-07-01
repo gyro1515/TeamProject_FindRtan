@@ -10,14 +10,20 @@ public class StageSelectManager : MonoBehaviour
 
     void Start()
     {
+        RefreshButtonState();// 씬이 시작될때 버튼 상태 갱신
         Debug.Log("StageUnlocked_1: " + PlayerPrefs.GetInt("StageUnlocked_1", 0)); // 추가
-       //스테이지 1은 항상 활성화
-        stage1Button.interactable = true;
-      
-       //스테이지 2는 해금 여부에 따라 활성화
-       if(PlayerPrefs.GetInt("StageUnlocked_1",0) == 1)
-            stage2Button.interactable = true;
-       else stage2Button.interactable = false;
+       
     }
-
+    public void RefreshButtonState()
+    {
+        Debug.Log("StageUnlocked_1: "+PlayerPrefs.GetInt("StageUnlocked_1", 0));
+        stage1Button.interactable = true;
+        if (PlayerPrefs.GetInt("StageUnlocked_1", 0) == 1)
+        {
+            stage2Button.gameObject.SetActive(true);
+            stage2Button.interactable = true;
+        }
+        else stage2Button.interactable = false;
+        
+    }
 }
