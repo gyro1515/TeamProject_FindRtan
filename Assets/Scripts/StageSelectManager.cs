@@ -13,7 +13,7 @@ public class StageSelectManager : MonoBehaviour
         Debug.Log("StageUnlocked_1: " + PlayerPrefs.GetInt("StageUnlocked_1", 0)); // 추가
        //스테이지 1은 항상 활성화
         stage1Button.interactable = true;
-       stage2Button.interactable = false;
+      
        //스테이지 2는 해금 여부에 따라 활성화
        if(PlayerPrefs.GetInt("StageUnlocked_1",0) == 1)
             stage2Button.interactable = true;
