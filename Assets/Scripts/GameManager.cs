@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Unity.Burst.Intrinsics;
 
 public class GameManager : MonoBehaviour
 {
     public Button Retry;
     public static GameManager instance;
+
 
     public enum GameProgress
     {
@@ -17,8 +19,14 @@ public class GameManager : MonoBehaviour
     public Card secondCard;
     public Text timeTxt;
     public GameObject endTxt;
+    public Text ComboTxt;
+    public int Combo = 0;
     public int cardCount = 10;
+
     float time = 30.0f;
+    bool gameOverTriggered = false;
+
+
     private void Awake()
     {
         if (instance == null)
@@ -27,32 +35,34 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     void Update()
     {
         switch (progress)
         {
             case GameProgress.EndGame:
-                SceneManager.LoadScene("GameOverScene");
-                Debug.Log("End");
+
+                if (!gameOverTriggered)
+                {
+                    gameOverTriggered = true;
+                    Invoke("GoToGameOver", 1.0f);
+                }
                 break;
+
             case GameProgress.StartGame:
                 time -= Time.deltaTime;
-               
-                if(time <= 0.0f)
+                if (time <= 0.0f)
                 {
                     time = 0.0f;
                     progress = GameProgress.Failed;
+                    ChallengeManager.instance.OnGameFailed();
                 }
                 timeTxt.text = time.ToString("N2");
                 break;
-            case GameProgress.Failed:   
+
+            case GameProgress.Failed:
                 Retry.gameObject.SetActive(true);
                 break;
-            default:
-                break;
         }
-
     }
 
     public void Matched()
@@ -62,28 +72,35 @@ public class GameManager : MonoBehaviour
             firstCard.DestroyCard();
             secondCard.DestroyCard();
             cardCount -= 2;
-            Debug.Log($"End{cardCount}");
+
+            Debug.Log($"남은 카드 수: {cardCount}");
+            
+            
+                Combo++;
+            ComboTxt.text = Combo.ToString();
+            
+
             if (cardCount == 0)
             {
                 progress = GameProgress.EndGame;
-                //Time.timeScale = 0.0f;
+                ChallengeManager.instance.OnGameClearedEarly(time);
                 endTxt.SetActive(false);
             }
-
         }
         else
         {
             firstCard.CloseCard();
             secondCard.CloseCard();
-
-
+            Combo = 0;
+            ComboTxt.text = Combo.ToString();
         }
 
         firstCard = null;
         secondCard = null;
-
     }
 
-    
-    
+    void GoToGameOver()
+    {
+        SceneManager.LoadScene("GameOverScene");
+    }
 }
