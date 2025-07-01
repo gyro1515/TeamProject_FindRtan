@@ -94,10 +94,15 @@ public class Board : MonoBehaviour
 
                 // 실제 보간용 float 변수
                 float tmpLerpTime = lerpTime - cardTime * i;
+                // Ease Out 효과 주기
+                float t = Mathf.Clamp01(tmpLerpTime);
+                float easedOut = 1f - (1f - t) * (1f - t);
                 // 위치 보간하여 이동하기
-                tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], tmpLerpTime);
+                //tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], tmpLerpTime);
+                tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], easedOut);
                 // 회전 보간하여 회전하기
-                float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], tmpLerpTime); // 두 바퀴 회전 용
+                //float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], tmpLerpTime); // 두 바퀴 회전 용
+                float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], easedOut); // 두 바퀴 회전 용
                 float nextZ = startRot[i] + angleOffset;
                 // 회전 적용하는 여러 방법
                 //tmpG[i].transform.localRotation = Quaternion.Euler(0f, 0f, nextZ);
