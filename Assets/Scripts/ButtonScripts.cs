@@ -26,12 +26,17 @@ public class ButtonScripts : MonoBehaviour
     // 추가: 다음 스테이지로 이동
     public void GoToNextStage()
     {
+        Time.timeScale = 1.0f;
         // GameManager의 currentStageIndex 값 사용
         int nextStage = GameManager.instance.currentStageIndex + 1;
         string nextSceneName = "MainScene" + nextStage;
         SceneManager.LoadScene(nextSceneName);
     }
-
+    //GameOverScene으로 이동
+    public void GoToGameOverScene()
+    {
+        SceneManager.LoadScene("GameOverScene");
+    }
 
 
 
