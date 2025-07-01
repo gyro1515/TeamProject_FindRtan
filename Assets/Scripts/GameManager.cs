@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public Button Retry;
     public static GameManager instance;
 
+
     public enum GameProgress
     {
         EndGame, StartGame, Failed
@@ -56,7 +57,7 @@ public class GameManager : MonoBehaviour
         {
             timeTxt.color = Color.red;
         }
-        else if (time <= 13f)
+        else if (time < 12f)
         {
             timeTxt.color = new Color(1f, 0.5f, 0f);
         }
