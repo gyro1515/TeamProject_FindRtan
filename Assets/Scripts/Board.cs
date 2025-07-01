@@ -86,19 +86,23 @@ public class Board : MonoBehaviour
         if (lerpTime >= 0.0f)
         {
             lerpTime += Time.deltaTime;
-            // 뿌려보기
+            // 카드 뿌려보기
             for (int i = 0; i < 10; i++)
             {
                 int tmpI = cardTime == 0.0f ? 10 : (int)(lerpTime / cardTime); // cardTime이 0이라면 바로 다 나가도록
                 if (tmpI < i) return;
-                // 직선
-                //tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], lerpTime);
+
+                // 실제 보간용 float 변수
                 float tmpLerpTime = lerpTime - cardTime * i;
+                // 위치 보간하여 이동하기
                 tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], tmpLerpTime);
+                // 회전 보간하여 회전하기
                 float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], tmpLerpTime); // 두 바퀴 회전 용
                 float nextZ = startRot[i] + angleOffset;
+                // 회전 적용하는 여러 방법
                 //tmpG[i].transform.localRotation = Quaternion.Euler(0f, 0f, nextZ);
-                tmpG[i].transform.localEulerAngles = new Vector3(0f, 0f, nextZ);
+                tmpG[i].transform.rotation = Quaternion.Euler(0f, 0f, nextZ);
+                //tmpG[i].transform.localEulerAngles = new Vector3(0f, 0f, nextZ);
                 //tmpG[i].transform.eulerAngles = new Vector3(0f, 0f, nextZ);
             }
             if (lerpTime > cardTotalTime)
