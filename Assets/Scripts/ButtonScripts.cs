@@ -9,7 +9,7 @@ public class ButtonScripts : MonoBehaviour
     {
         SceneManager.LoadScene("MainScene1");
     }
-    public void StatrToMain2()
+    public void StartToMain2()
     {
         SceneManager.LoadScene("MainScene2");
     }

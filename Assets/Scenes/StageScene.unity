@@ -855,7 +855,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1578735205}
         m_TargetAssemblyTypeName: ButtonScripts, Assembly-CSharp
-        m_MethodName: StatrToMain2
+        m_MethodName: StartToMain2
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
