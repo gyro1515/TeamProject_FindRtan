@@ -1189,7 +1189,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1677712945}
         m_TargetAssemblyTypeName: ButtonScripts, Assembly-CSharp
-        m_MethodName: GoToStageSelect
+        m_MethodName: SelectToStage
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -50,6 +50,10 @@ public class ButtonScripts : MonoBehaviour
 
     public void GoToStageSelect()
     {
+        // 기존 해금 정보 삭제
+        PlayerPrefs.DeleteKey("StageUnlocked_1");
+        PlayerPrefs.Save();
+
         Time.timeScale = 1.0f; //혹시 멈춰있다면 재개
         SceneManager.LoadScene("StageScene");
     }

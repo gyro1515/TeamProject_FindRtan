@@ -657,8 +657,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b05144798e63de64ea62cf9a011dc73e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stage1Button: {fileID: 448261017}
-  stage2Button: {fileID: 1578735204}
+  stageButtons:
+  - button: {fileID: 448261017}
+    stageNumber: 1
+  - button: {fileID: 1578735204}
+    stageNumber: 2
 --- !u!4 &836690502
 Transform:
   m_ObjectHideFlags: 0
