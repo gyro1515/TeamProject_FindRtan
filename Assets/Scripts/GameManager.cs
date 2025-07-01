@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.Video;
 using UnityEngine.UI;
+using System.Collections;
 using UnityEngine.SceneManagement;
 using Unity.Burst.Intrinsics;
 
@@ -7,7 +9,9 @@ public class GameManager : MonoBehaviour
 {
     public Button Retry;
     public static GameManager instance;
-
+    public RawImage videoDisplay;
+    public VideoPlayer videoPlayer;
+    public VideoClip[] endingVideos;
 
     public enum GameProgress
     {
@@ -25,7 +29,7 @@ public class GameManager : MonoBehaviour
 
     float time = 30.0f;
     bool gameOverTriggered = false;
-
+    private bool Win = false;
 
     private void Awake()
     {
@@ -44,7 +48,7 @@ public class GameManager : MonoBehaviour
                 if (!gameOverTriggered)
                 {
                     gameOverTriggered = true;
-                    Invoke("GoToGameOver", 1.0f);
+                    Invoke("GoToGameOver", 5.0f);
                 }
                 break;
 
@@ -101,6 +105,7 @@ public class GameManager : MonoBehaviour
 
     void GoToGameOver()
     {
+        
         SceneManager.LoadScene("GameOverScene");
     }
 }
