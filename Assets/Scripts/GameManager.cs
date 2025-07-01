@@ -4,8 +4,13 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public AudioSource bgmAudioSource;
+    public AudioClip normalBGM;
+    public AudioClip warningBGM;
     public Button Retry;
     public static GameManager instance;
+
+    private bool isWarningBGMPlaying = false;
 
 
     public enum GameProgress
@@ -26,6 +31,13 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
         }
+    }
+
+    void Start()
+    {
+        bgmAudioSource.clip = normalBGM;
+        bgmAudioSource.loop = true;
+        bgmAudioSource.Play();
     }
 
 
@@ -57,7 +69,7 @@ public class GameManager : MonoBehaviour
         {
             timeTxt.color = Color.red;
         }
-        else if (time < 12f)
+        else if (time < 10f)
         {
             timeTxt.color = new Color(1f, 0.5f, 0f);
         }
@@ -66,6 +78,26 @@ public class GameManager : MonoBehaviour
             timeTxt.color = Color.black;
         }
 
+        if (time <= 10f && !isWarningBGMPlaying)
+        {
+            bgmAudioSource.Stop();
+            bgmAudioSource.clip = warningBGM;
+            bgmAudioSource.volume = 0.2f;
+            bgmAudioSource.Play();
+            isWarningBGMPlaying = true;
+        }
+        else if (time > 10f && isWarningBGMPlaying)
+        {
+            bgmAudioSource.Stop();
+            bgmAudioSource.clip = normalBGM;
+            bgmAudioSource.volume = 0.3f;
+            bgmAudioSource.Play();
+            isWarningBGMPlaying = false;
+        }
+        if ((progress == GameProgress.EndGame || progress == GameProgress.Failed) && bgmAudioSource.isPlaying)
+        {
+            bgmAudioSource.Stop();
+        }
     }
 
     public void Matched()
