@@ -10,7 +10,7 @@ public class Card2 : Card // 카드 상속 받아서 카드에 있는 값들 그
     
 
     // 게임 매니저씬에서 가져와야 함
-    public override void OpenCard()
+    public override void OpenCard() // 오버라이드 함수
     {
         // 게임 중이 아니라면 동작 금지
         if (GameManager.instance.progress != GameManager.GameProgress.StartGame) return;
