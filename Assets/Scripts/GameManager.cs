@@ -34,7 +34,6 @@ public class GameManager : MonoBehaviour
         {
             case GameProgress.EndGame:
                 SceneManager.LoadScene("GameOverScene");
-                Debug.Log("End");
                 break;
             case GameProgress.StartGame:
                 time -= Time.deltaTime;
@@ -48,9 +47,22 @@ public class GameManager : MonoBehaviour
                 break;
             case GameProgress.Failed:   
                 Retry.gameObject.SetActive(true);
+                timeTxt.text = "시간 초과!";
                 break;
             default:
                 break;
+        }
+        if (time <= 5f)
+        {
+            timeTxt.color = Color.red;
+        }
+        else if (time <= 13f)
+        {
+            timeTxt.color = new Color(1f, 0.5f, 0f);
+        }
+        else
+        {
+            timeTxt.color = Color.black;
         }
 
     }
@@ -62,7 +74,6 @@ public class GameManager : MonoBehaviour
             firstCard.DestroyCard();
             secondCard.DestroyCard();
             cardCount -= 2;
-            Debug.Log($"End{cardCount}");
             if (cardCount == 0)
             {
                 progress = GameProgress.EndGame;
