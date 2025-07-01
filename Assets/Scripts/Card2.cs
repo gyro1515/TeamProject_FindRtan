@@ -8,7 +8,7 @@ public class Card2 : Card
     //float tmpTime = 0;
     bool tmpIsOpen = false;
 
-
+    // Card 상속 받아서 아래있는 내용 지워도 됨
     /*public int idx = 0;
     // 끄고 킬 카드 앞,뒤 면
     [SerializeField] GameObject front;
@@ -58,11 +58,14 @@ public class Card2 : Card
     {
         // 게임 중이 아니라면 동작 금지
         if (GameManager.instance.progress != GameManager.GameProgress.StartGame) return;
-        // 뒤집는 중이라면 리턴
+        // 날아가는 중이라면 동작 금지
+        if (cardState == CardState.Fly) return;
+        // 뒤집는 중이라면 동작 금지 = 리턴
         if (tmpIsOpen) return;
+
         tmpIsOpen = true;
         //PlayOneShot()을 사용하면 다른 효과음끼리 겹치지 않음
-        audioSource.PlayOneShot(clip);
+        audioSource.PlayOneShot(flipClip);
         anim.SetBool("IsOpen", true);
         /*back.SetActive(false);
         front.SetActive(true);*/

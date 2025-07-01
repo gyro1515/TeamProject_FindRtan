@@ -63,6 +63,7 @@ public class GameManager : MonoBehaviour
     {
         if (firstCard.idx == secondCard.idx)
         {
+            firstCard.PlayCorrectSound();
             firstCard.DestroyCard();
             secondCard.DestroyCard();
             cardCount -= 2;

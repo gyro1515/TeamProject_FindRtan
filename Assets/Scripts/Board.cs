@@ -18,13 +18,18 @@ public class Board : MonoBehaviour
     float lerpTime = 0.0f;
     // 사운드용
     AudioSource sound;
+    // 사운드 속도
+    [SerializeField] float pitchSpeed = 3.5f;
+    // 카드 뿌리는 간격
+    [SerializeField] float cardTime = 0.5f;
+    // 카드 날아가는 총 시간
+    float cardTotalTime = 5.5f;
 
     void Start()
     {
         sound = GetComponent<AudioSource>();
-        sound.pitch = 3.5f;
+        sound.pitch = pitchSpeed;
         int[] arr = { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5 };
-        //arr.OrderBy(x => Random.Range(1f, 5f)).ToArray();
         for (int i = arr.Length - 1; i > 0; i--)
         {
             int j = UnityEngine.Random.Range(0, i + 1);
@@ -46,10 +51,11 @@ public class Board : MonoBehaviour
         startV2 = new List<Vector2>();
         startRot = new List<float>();
         tmpG = new List<GameObject>();
+        
+        tmpG.Reverse();
         for (int i = 0; i < 10; i++)
         {
             tmpG.Add(Instantiate(card, this.transform));
-
             float x = (i % 4) * 1.4f - 2.1f;
             float y = (i / 4) * 1.4f - 3.0f;
             endV2.Add(new Vector2(x, y));
@@ -64,30 +70,37 @@ public class Board : MonoBehaviour
             tmpG[i].GetComponent<Card>().anim.speed = 0f;
         }
 
+        // 날아가는 시간 세팅
+        cardTotalTime = cardTime * 9 + 1.0f; // 카드 인덱스 수 + 1초만큼
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if (lerpTime <= 1.0f && lerpTime >= 0.0f)
+        if (lerpTime <= cardTotalTime && lerpTime >= 0.0f)
         {
             lerpTime += Time.deltaTime;
             // 뿌려보기
             for (int i = 0; i < 10; i++)
             {
-                tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], lerpTime);
-                float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], lerpTime); // 두 바퀴 회전 용
+                int tmpI = cardTime == 0.0f ? 10 : (int)(lerpTime / cardTime); // cardTime이 0이라면 바로 다 나가도록
+                if (tmpI < i) return;
+                // 직선
+                //tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], lerpTime);
+                float tmpLerpTime = lerpTime - cardTime * i;
+                tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], tmpLerpTime);
+                float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], tmpLerpTime); // 두 바퀴 회전 용
                 float nextZ = startRot[i] + angleOffset;
                 tmpG[i].transform.localRotation = Quaternion.Euler(0f, 0f, nextZ);
             }
         }
-        else if (lerpTime > 1.0f)
+        else if (lerpTime > cardTotalTime)
         {
             lerpTime = -1f;
             for (int i = 0; i < 10; i++)
             {
                 tmpG[i].GetComponent<Card>().anim.speed = 1.0f;
+                tmpG[i].GetComponent<Card>().cardState = Card.CardState.Ready;
             }
         }
     }

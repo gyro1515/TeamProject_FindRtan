@@ -5,9 +5,11 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-    // 테스트용
-    //float tmpTime = 0;
-    //bool tmpIsOpen = false;
+    public enum CardState
+    {
+        Fly, Ready
+    }
+    public CardState cardState = CardState.Fly;
 
 
     public int idx = 0;
@@ -20,7 +22,9 @@ public class Card : MonoBehaviour
     [SerializeField] SpriteRenderer frontImg;
     // 카드 뒤집기 사운드
     protected AudioSource audioSource;
-    public AudioClip clip;
+    public AudioClip flipClip;
+    public AudioClip correctClip;
+
 
     private void Start()
     {
@@ -60,9 +64,11 @@ public class Card : MonoBehaviour
     {
         // 게임 중이 아니라면 동작 금지
         if (GameManager.instance.progress != GameManager.GameProgress.StartGame) return;
+        // 날아가는 중이라면 동작 금지
+        if (cardState == CardState.Fly) return;
 
         //PlayOneShot()을 사용하면 다른 효과음끼리 겹치지 않음
-        audioSource.PlayOneShot(clip);
+        audioSource.PlayOneShot(flipClip);
         anim.SetBool("IsOpen", true);
         back.SetActive(false);
         front.SetActive(true);
@@ -110,5 +116,10 @@ public class Card : MonoBehaviour
     {
         back.SetActive(false);
         front.SetActive(true);
+    }
+
+    public void PlayCorrectSound()
+    {
+        audioSource.PlayOneShot(correctClip);
     }
 }

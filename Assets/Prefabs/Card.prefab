@@ -74,7 +74,8 @@ MonoBehaviour:
   back: {fileID: 5798053476251024350}
   anim: {fileID: 5345570882223746740}
   frontImg: {fileID: 8187653177168632241}
-  clip: {fileID: 8300000, guid: 99d135f3e8280c845b3d1b8dd512d870, type: 3}
+  flipClip: {fileID: 8300000, guid: 99d135f3e8280c845b3d1b8dd512d870, type: 3}
+  correctClip: {fileID: 8300000, guid: 80ceecae17de20f47937080aa8dffa82, type: 3}
 --- !u!82 &6994069122885715412
 AudioSource:
   m_ObjectHideFlags: 0
