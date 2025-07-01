@@ -8,6 +8,10 @@ public class ButtonScripts : MonoBehaviour
     {
         SceneManager.LoadScene("StageScene");
     }
+    public void RetryButton()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 
 
 
