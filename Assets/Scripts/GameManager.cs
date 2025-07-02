@@ -142,24 +142,8 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameProgress.EndGame:
-
-                //마지막 스테이지 클리어>즉시 GameOverScene로드
-                Time.timeScale = 1f;
-                if (!gameOverTriggered)
-                // 타이머 누적
-                {
-                    //Debug.Log(time);
-                    time += Time.deltaTime;
-                }
-                // 조건 만족시 한번만 실행
-                if (time >= 1.2f)
-                {
-                    if (!gameOverTriggered)
-                    {
-                        gameOverTriggered = true;
-                        Invoke("GoToGameOver", 2.0f);
-                    }
-                }
+                Invoke("EndGame", 3.0f);
+              
                 break;
 
             case GameProgress.StartGame:
@@ -208,11 +192,7 @@ public class GameManager : MonoBehaviour
                 timeTxt.text = "시간 초과!";
                 break;
             case GameProgress.SelectStage:
-                // 스테이지 선택 패널 활성화
-                if (selectPanel != null)
-                {
-                    selectPanel.SetActive(true);
-                }
+                Invoke("SelectStage", 3.0f);
                 break;
             default:
                 break;
@@ -223,6 +203,34 @@ public class GameManager : MonoBehaviour
             bgmAudioSource.Stop();
         }
                 
+    }
+    void SelectStage()
+    {
+        // 스테이지 선택 패널 활성화
+        if (selectPanel != null)
+        {
+            selectPanel.SetActive(true);
+        }
+    }
+    void EndGame()
+    {
+        //마지막 스테이지 클리어>즉시 GameOverScene로드
+        Time.timeScale = 1f;
+        if (!gameOverTriggered)
+        // 타이머 누적
+        {
+            //Debug.Log(time);
+            time += Time.deltaTime;
+        }
+        // 조건 만족시 한번만 실행
+        if (time >= 1.2f)
+        {
+            if (!gameOverTriggered)
+            {
+                gameOverTriggered = true;
+                Invoke("GoToGameOver", 2.0f);
+            }
+        }
     }
 
     public void Matched()
@@ -242,21 +250,22 @@ public class GameManager : MonoBehaviour
 
             if (cardCount == 0)
             {
-                ShowClearImageBasedOnTime();
+               Invoke ("ShowClearImageBasedOnTime",0.5f);
                 // 마지막 스테이지
                 if (currentStageIndex + 1 >= totalStageCount)
                 {
                     Debug.Log("clear");
                     //마지막 스테이지 완료 > 게임오버씬으로 전환
                     progress = GameProgress.EndGame;
-                   
+
                     //endTxt.SetActive(false);
                 }
+
                 else
                 {
                     Debug.Log("next stage");
                     // 마지막 스테이지인지 체크
-                    progress = GameProgress.NextStage;
+                    //progress = GameProgress.NextStage;
                     // 다음 스테이지 해금
                     currentStageIndex++;
                     /*PlayerPrefs.SetInt("StageUnlocked_" + (currentStageIndex + 1), 1);
@@ -265,8 +274,9 @@ public class GameManager : MonoBehaviour
                     progress = GameProgress.SelectStage;
                     //1초 딜레이 후 판넬 활성화(코루틴사용)
                     StartCoroutine(ShowSelectPanelWithDelay());
-
                 }
+                // 마지막 스테이지
+
 
 
                 //게임 진행을 멈추고 싶으면
@@ -293,7 +303,12 @@ public class GameManager : MonoBehaviour
         firstCard = null;
         secondCard = null;
     }
-    void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미지
+
+    
+   
+
+
+void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미지
     {
         if (fastImage == null || normalImage == null || slowImage == null) return;
         fastImage.SetActive(false);
@@ -320,9 +335,9 @@ public class GameManager : MonoBehaviour
     }
     void HideImage()
     {
-        firstCard.PlayErrorSount();
-        firstCard.CloseCard();
-        secondCard.CloseCard();
+        fastImage.SetActive(false);
+        normalImage.SetActive(false);
+        slowImage.SetActive(false);
     }
     // 코루틴 함수 추가
     private IEnumerator ShowSelectPanelWithDelay()
