@@ -23,7 +23,7 @@ public class Board : MonoBehaviour
     // 카드 뿌리는 간격
     [SerializeField] float cardTime = 0.5f;
     // 카드 날아가는 총 시간
-    float cardTotalTime = 5.5f;
+    public float cardTotalTime = 5.5f;
 
     void Start()
     {
