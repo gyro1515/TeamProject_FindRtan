@@ -21,7 +21,8 @@ public class ChallengeManager : MonoBehaviour
         if (!Lose)
         {
             Lose = true;
-            Debug.Log("잘봐 이게 클릭이야");
+            
+            Debug.Log("잘 못해도 괜찮아");
         }
     }
     public void OnGameClearedEarly(float timeLeft)
@@ -44,18 +45,21 @@ public class ChallengeManager : MonoBehaviour
          {
            
             Debug.Log("카드뒤집기 달인");
+           
             index = 1;
          }
        else if (elapsedTime <= 20f && !Win)
         {
            
             Debug.Log("카드뒤집기 수재");
+            
             index = 2;
         }
         else if (elapsedTime <= 25f && !Win)
         {
             
             Debug.Log("아슬아슬");
+            
             index = 3;
         }
     }
