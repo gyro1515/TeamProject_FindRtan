@@ -28,7 +28,8 @@ public class GameManager : MonoBehaviour
         public int stageNumber;
     }
     // 스테이지 선택 버튼 배열
-    public StageButton[] stageButtons;
+    //public StageButton[] stageButtons;
+    public StageButton[] stageButtons = new StageButton[2];
 
 
     private bool isWarningBGMPlaying = false;
@@ -95,7 +96,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         //스테이지 인덱스 초기화
-        RefreshButtonState();
+        //RefreshButtonState();
         //if(bgmAudioSource != null && !instance.bgmAudioSource.isPlaying)
         bgmAudioSource = GetComponent<AudioSource>();
         Debug.Log("Setting");
@@ -119,7 +120,10 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+
         if (timeTxt == null) return;
+        //스테이지 인덱스 초기화
+        RefreshButtonState();
         switch (progress)
         {
             case GameProgress.SettingCard:
@@ -232,10 +236,11 @@ public class GameManager : MonoBehaviour
 
             if (cardCount == 0)
             {
-                Debug.Log(currentStageIndex);
+                //Debug.Log(currentStageIndex);
                 // 마지막 스테이지
                 if (currentStageIndex + 1 >= totalStageCount)
                 {
+                    Debug.Log("clear");
                     //마지막 스테이지 완료 > 게임오버씬으로 전환
                     progress = GameProgress.EndGame;
                     ChallengeManager.instance.OnGameClearedEarly(time);
@@ -243,6 +248,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
+                    Debug.Log("next stage");
                     // 마지막 스테이지인지 체크
                     progress = GameProgress.NextStage;
 
@@ -303,10 +309,12 @@ public class GameManager : MonoBehaviour
     // 스테이지 로드 함수
     public void RefreshButtonState()
     {
+        
         foreach (var sb in stageButtons)
         {
-            bool unlocked = (sb.stageNumber == 1)
-                || PlayerPrefs.GetInt("StageUnlocked_" + (sb.stageNumber - 1), 0) == 1;
+           
+            bool unlocked = (sb.stageNumber <= 1 + instance.currentStageIndex);
+                //|| PlayerPrefs.GetInt("StageUnlocked_" + (sb.stageNumber - 1), 0) == 1;
 
             // 보이기/숨기기
             sb.button.gameObject.SetActive(unlocked);
@@ -318,13 +326,14 @@ public class GameManager : MonoBehaviour
                 sb.button.onClick.RemoveAllListeners();
                 sb.button.onClick.AddListener(() => LoadStage(sb.stageNumber));
             }
+
         }
     }
     
     // 스테이지 로드 함수
     public void LoadStage(int stageNumber)
     {
-        Debug.Log(currentStageIndex + " "+ stageNumber);
+        //Debug.Log(currentStageIndex + " "+ stageNumber);
         Time.timeScale = 1f;
         GameManager.instance.currentStageIndex = stageNumber - 1;
         SceneManager.LoadScene("MainScene" + stageNumber);
@@ -344,7 +353,7 @@ public class GameManager : MonoBehaviour
         instance.videoPlayer = videoPlayer;
         instance.endingVideos = endingVideos;
         instance.isWarningBGMPlaying = isWarningBGMPlaying;
-        instance.currentStageIndex = currentStageIndex;
+        //instance.currentStageIndex = currentStageIndex;
         instance.totalStageCount = totalStageCount;
         instance.selectPanel = selectPanel;
         instance.progress = progress;
@@ -358,7 +367,11 @@ public class GameManager : MonoBehaviour
         instance.time = time;
         instance.gameOverTriggered = gameOverTriggered;
         instance.Win = Win;
-        instance.curBoard = curBoard;
-        instance.setCardTime = instance.curBoard.cardTotalTime;
+        if(curBoard != null)
+        {
+            instance.curBoard = curBoard;
+            instance.setCardTime = instance.curBoard.cardTotalTime;
+        }
+        instance.stageButtons = stageButtons;
     }
 }

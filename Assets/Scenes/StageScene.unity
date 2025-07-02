@@ -1002,7 +1002,11 @@ MonoBehaviour:
   videoPlayer: {fileID: 0}
   endingVideos: []
   curBoard: {fileID: 0}
-  stageButtons: []
+  stageButtons:
+  - button: {fileID: 448261017}
+    stageNumber: 1
+  - button: {fileID: 1578735204}
+    stageNumber: 2
   currentStageIndex: 0
   totalStageCount: 2
   selectPanel: {fileID: 0}

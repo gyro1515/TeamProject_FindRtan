@@ -38,6 +38,7 @@ public class ButtonScripts : MonoBehaviour
     {
         Time.timeScale = 1.0f;
         // GameManager의 currentStageIndex 값 사용
+        GameManager.instance.currentStageIndex++;
         //int nextStage = GameManager.instance.currentStageIndex + 1;
         //string nextSceneName = "MainScene" + nextStage;
         //SceneManager.LoadScene(nextSceneName);
