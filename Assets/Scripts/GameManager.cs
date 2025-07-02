@@ -15,10 +15,9 @@ public class GameManager : MonoBehaviour
     public AudioClip normalBGM;
     public AudioClip warningBGM;
     public Button Retry;
-    public RawImage videoDisplay;
-    public VideoPlayer videoPlayer;
-    public VideoClip[] endingVideos;
-
+    public GameObject fastImage;
+    public GameObject normalImage;
+    public GameObject slowImage;
     private bool isWarningBGMPlaying = false;
 
 
@@ -131,7 +130,7 @@ public class GameManager : MonoBehaviour
                     if (!gameOverTriggered)
                     {
                         gameOverTriggered = true;
-                        Invoke("GoToGameOver", 5.0f);
+                        Invoke("GoToGameOver", 2.0f);
                     }
                 }
                 break;
@@ -142,7 +141,7 @@ public class GameManager : MonoBehaviour
                 {
                     time = 0.0f;
                     progress = GameProgress.Failed;
-                    ChallengeManager.instance.OnGameFailed();
+                   
                 }
                 if (timeTxt != null)
                 {
@@ -212,12 +211,14 @@ public class GameManager : MonoBehaviour
 
             if (cardCount == 0)
             {
+                ShowClearImageBasedOnTime();
+
                 // 마지막 스테이지
                 if (currentStageIndex + 1 >= totalStageCount)
                 {
                     //마지막 스테이지 완료 > 게임오버씬으로 전환
                     progress = GameProgress.EndGame;
-                    ChallengeManager.instance.OnGameClearedEarly(time);
+                   
                     //endTxt.SetActive(false);
                 }
                 else
@@ -241,7 +242,7 @@ public class GameManager : MonoBehaviour
                 // 넘어가는 유예시간 주기
                 time = 0.0f;
                 //endTxt.SetActive(false);
-                ChallengeManager.instance.OnGameClearedEarly(time);
+                
                 //endTxt.SetActive(false);
             }
         }
@@ -258,6 +259,30 @@ public class GameManager : MonoBehaviour
         firstCard = null;
         secondCard = null;
     }
+    void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미지
+    {
+        fastImage.SetActive(false);
+        normalImage.SetActive(false);
+        slowImage.SetActive(false);
+
+        if (time > 20f)
+        {
+            fastImage.SetActive(true);
+            Debug.Log("빠른클리어 - photo");
+        }
+        else if (time > 10f)
+        {
+            normalImage.SetActive(true);
+            Debug.Log("보통클리어 - photo");
+        }
+        else
+        {
+            slowImage.SetActive(true);
+            Debug.Log("느린클리어 - photo");
+        }
+
+       
+    }
     // 코루틴 함수 추가
     private IEnumerator ShowSelectPanelWithDelay()
     {
@@ -271,12 +296,15 @@ public class GameManager : MonoBehaviour
        
     }
 
+
     public bool IsStageUnlocked(int stageIndex)
     {
         if (stageIndex == 0) return true;
         return PlayerPrefs.GetInt("StageUnlocked_"+ stageIndex, 0) == 1;
     }
-    
+ 
+
+
     void GoToGameOver()
     {
         SceneManager.LoadScene("GameOverScene");
@@ -287,9 +315,9 @@ public class GameManager : MonoBehaviour
         instance.normalBGM = normalBGM;
         instance.warningBGM = warningBGM;
         instance.Retry = Retry;
-        instance.videoDisplay = videoDisplay;
-        instance.videoPlayer = videoPlayer;
-        instance.endingVideos = endingVideos;
+        instance.fastImage = fastImage;
+        instance.normalImage = normalImage; 
+        instance.slowImage = slowImage;
         instance.isWarningBGMPlaying = isWarningBGMPlaying;
         instance.currentStageIndex = currentStageIndex;
         instance.totalStageCount = totalStageCount;
