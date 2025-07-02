@@ -5,6 +5,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 //using System.Collections; //코루틴용 using문
 using Unity.Burst.Intrinsics;
+using UnityEditor.Experimental.GraphView;
 
 
 public class GameManager : MonoBehaviour
@@ -40,7 +41,7 @@ public class GameManager : MonoBehaviour
 
     public enum GameProgress
     {
-        SettingCard, EndGame, StartGame, Failed, NextStage, SelectStage,
+        SettingCard, EndGame, StartGame, Failed, NextStage, SelectStage, Finish
     }
     //스테이지 변수 추가
     public int currentStageIndex = 0; // 0번부터 시작, 빌드 세팅 순서에 맞게
@@ -57,7 +58,7 @@ public class GameManager : MonoBehaviour
     //public GameObject endTxt;
     public Text ComboTxt;
     public int Combo = 0;
-    public int cardCount = 10;
+    int cardCount = 12;
     // 시간 관리
     public float startTime = 30.0f;
     float time = 0.0f;
@@ -74,18 +75,19 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             //Debug.Log("On" + " " + gameObject.GetInstanceID() + " " + instance.gameObject.GetInstanceID());
         }
-        else
+        // 논리적으로 스타트로 옮기는 게 맞는 거 같아 아래 내용은 Start()로 옮겼습니다
+        /*else
         {
             
-            if (bgmAudioSource)
+            *//*if (bgmAudioSource)
             {
                 Debug.Log("On" + gameObject.GetInstanceID());
             }
             else
             {
                 Debug.Log("Off" + gameObject.GetInstanceID());
-            }
-            //CopyToGameInstace();
+            }*//*
+            
             // CopyToGameInstace() 내용은 -> OnDestroy로 이전
             Destroy(this.gameObject);
             if (!instance.bgmAudioSource.isPlaying)
@@ -95,11 +97,44 @@ public class GameManager : MonoBehaviour
                 instance.bgmAudioSource.volume = 0.3f;
                 instance.bgmAudioSource.Play();
             }
-        }
+        }*/
     }
 
     void Start()
     {
+        // instance가 있고 이 인스턴스가 자신이 아닐때만 인스턴스에 복사하고, 자신은 삭제하기
+        if (instance != null && instance != this)
+        {
+            CopyToGameInstace();
+            Destroy(this.gameObject);
+            if (instance.bgmAudioSource != null)
+            {
+                if(!instance.bgmAudioSource.isPlaying)
+                {
+                    instance.bgmAudioSource.clip = normalBGM;
+                    instance.bgmAudioSource.loop = true;
+                    instance.bgmAudioSource.volume = 0.3f;
+                    instance.bgmAudioSource.Play();
+                }
+                else if (instance.bgmAudioSource.clip == warningBGM)
+                {
+                    instance.bgmAudioSource.Stop();
+                    instance.bgmAudioSource.clip = normalBGM;
+                    instance.bgmAudioSource.loop = true;
+                    instance.bgmAudioSource.volume = 0.3f;
+                    instance.bgmAudioSource.Play();
+                }
+            }
+            /*if (instance.bgmAudioSource && (!instance.bgmAudioSource.isPlaying || instance.bgmAudioSource.clip == warningBGM))
+            {
+                instance.bgmAudioSource.clip = normalBGM;
+                instance.bgmAudioSource.loop = true;
+                instance.bgmAudioSource.volume = 0.3f;
+                instance.bgmAudioSource.Play();
+            }*/
+            return; // 이 아래 실행 x
+        }
+        
         //스테이지 인덱스 초기화
         //RefreshButtonState();
         //if(bgmAudioSource != null && !instance.bgmAudioSource.isPlaying)
@@ -112,11 +147,11 @@ public class GameManager : MonoBehaviour
             bgmAudioSource.loop = true;
             bgmAudioSource.volume = 0.3f;
             bgmAudioSource.Play();
-            Debug.Log("PlaySound");
+            //Debug.Log("PlaySound");
         }
         else
         {
-            Debug.Log("No");
+            //Debug.Log("No");
         }
         progress = GameProgress.SettingCard;
     }
@@ -143,9 +178,8 @@ public class GameManager : MonoBehaviour
                 break;
             case GameProgress.EndGame:
                 Invoke("EndGame", 3.0f);
-              
+                progress = GameProgress.Finish;
                 break;
-
             case GameProgress.StartGame:
                 time -= Time.deltaTime;
                 if (time <= 0.0f)
@@ -192,7 +226,10 @@ public class GameManager : MonoBehaviour
                 timeTxt.text = "시간 초과!";
                 break;
             case GameProgress.SelectStage:
-                Invoke("SelectStage", 3.0f);
+                Invoke("SelectStage", 4.0f);
+                progress = GameProgress.Finish;
+                break;
+            case GameProgress.Finish:
                 break;
             default:
                 break;
@@ -215,7 +252,7 @@ public class GameManager : MonoBehaviour
     void EndGame()
     {
         //마지막 스테이지 클리어>즉시 GameOverScene로드
-        Time.timeScale = 1f;
+        /*Time.timeScale = 1f;
         if (!gameOverTriggered)
         // 타이머 누적
         {
@@ -230,7 +267,8 @@ public class GameManager : MonoBehaviour
                 gameOverTriggered = true;
                 Invoke("GoToGameOver", 2.0f);
             }
-        }
+        }*/
+        GoToGameOver();
     }
 
     public void Matched()
@@ -242,52 +280,32 @@ public class GameManager : MonoBehaviour
             secondCard.DestroyCard();
             cardCount -= 2;
 
-            Debug.Log($"남은 카드 수: {cardCount}");
-            
-            
+            //Debug.Log($"남은 카드 수: {cardCount}");
             Combo++;
             ComboTxt.text = Combo.ToString();
 
             if (cardCount == 0)
             {
-               Invoke ("ShowClearImageBasedOnTime",0.5f);
+                // 업적 띄우기
+                Invoke("ShowClearImageBasedOnTime", 1.5f);
                 // 마지막 스테이지
                 if (currentStageIndex + 1 >= totalStageCount)
                 {
-                    Debug.Log("clear");
-                    //마지막 스테이지 완료 > 게임오버씬으로 전환
+                                        //마지막 스테이지 완료 > 게임오버씬으로 전환
                     progress = GameProgress.EndGame;
-
-                    //endTxt.SetActive(false);
                 }
 
                 else
                 {
-                    Debug.Log("next stage");
-                    // 마지막 스테이지인지 체크
-                    //progress = GameProgress.NextStage;
-                    // 다음 스테이지 해금
+                                       // 다음 스테이지 해금
                     currentStageIndex++;
                     /*PlayerPrefs.SetInt("StageUnlocked_" + (currentStageIndex + 1), 1);
                     PlayerPrefs.Save();*/
-
                     progress = GameProgress.SelectStage;
-                    //1초 딜레이 후 판넬 활성화(코루틴사용)
-                    StartCoroutine(ShowSelectPanelWithDelay());
+                    
                 }
-                // 마지막 스테이지
-
-
-
-                //게임 진행을 멈추고 싶으면
-                //Time.timeScale = 0.0f;
-                //progress = GameProgress.EndGame;
-                //Time.timeScale = 0.0f;
                 // 넘어가는 유예시간 주기
                 time = 0.0f;
-                //endTxt.SetActive(false);
-                
-                //endTxt.SetActive(false);
             }
         }
         else
@@ -299,13 +317,9 @@ public class GameManager : MonoBehaviour
             Combo = 0;
             ComboTxt.text = Combo.ToString();
         }
-
         firstCard = null;
         secondCard = null;
     }
-
-    
-   
 
 
 void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미지
@@ -330,11 +344,12 @@ void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미�
             slowImage.SetActive(true);
             Debug.Log("느린클리어 - photo");
         }
-        Invoke("HideImage", 1.5f);
+        Invoke("HideImage", 2.0f);
        
     }
     void HideImage()
     {
+        if (fastImage == null || normalImage == null || slowImage == null) return;
         fastImage.SetActive(false);
         normalImage.SetActive(false);
         slowImage.SetActive(false);
@@ -362,14 +377,14 @@ void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미�
     // 스테이지 로드 함수
     public void RefreshButtonState()
     {
-        Debug.Log("currentStageIndex: " + currentStageIndex);
+        //Debug.Log("currentStageIndex: " + currentStageIndex);
 
         foreach (var sb in stageButtons)
         {
             bool unlocked = (sb.stageNumber <= 1 + instance.currentStageIndex);
             //|| PlayerPrefs.GetInt("StageUnlocked_" + (sb.stageNumber - 1), 0) == 1;
 
-            Debug.Log("Button: " + sb.stageNumber + " " + unlocked);
+            //Debug.Log("Button: " + sb.stageNumber + " " + unlocked);
             // 보이기/숨기기
             sb.button.gameObject.SetActive(unlocked);
             sb.button.interactable = unlocked;
@@ -398,7 +413,38 @@ void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미�
     {
         SceneManager.LoadScene("GameOverScene");
     }
-    private void OnDestroy()
+    void CopyToGameInstace()
+    {
+        instance.normalBGM = normalBGM;
+        instance.warningBGM = warningBGM;
+        instance.Retry = Retry;
+        instance.fastImage = fastImage;
+        instance.normalImage = normalImage;
+        instance.slowImage = slowImage;
+        instance.isWarningBGMPlaying = isWarningBGMPlaying;
+        //instance.currentStageIndex = currentStageIndex;
+        instance.totalStageCount = totalStageCount;
+        instance.selectPanel = selectPanel;
+        instance.progress = progress;
+        instance.firstCard = firstCard;
+        instance.secondCard = secondCard;
+        instance.timeTxt = timeTxt;
+        instance.ComboTxt = ComboTxt;
+        instance.Combo = Combo;
+        instance.cardCount = cardCount;
+        instance.startTime = startTime;
+        instance.time = time;
+        instance.gameOverTriggered = gameOverTriggered;
+        instance.Win = Win;
+        if (curBoard != null)
+        {
+            instance.curBoard = curBoard;
+            instance.setCardTime = instance.curBoard.cardTotalTime;
+        }
+        instance.stageButtons = stageButtons;
+        instance.isFirstSetStageBtn = isFirstSetStageBtn;
+    }
+    /*private void OnDestroy()
     {
         instance.normalBGM = normalBGM;
         instance.warningBGM = warningBGM;
@@ -428,5 +474,5 @@ void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미�
         }
         instance.stageButtons = stageButtons;
         instance.isFirstSetStageBtn = isFirstSetStageBtn;
-    }
+    }*/
 }

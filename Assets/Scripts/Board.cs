@@ -24,13 +24,15 @@ public class Board : MonoBehaviour
     [SerializeField] float cardTime = 0.5f;
     // 카드 날아가는 총 시간
     public float cardTotalTime = 5.5f;
+    // 카드 총 개수
+    [SerializeField] int cardCnt = 12;
 
     void Start()
     {
         sound = GetComponent<AudioSource>();
         if (sound != null ) sound.pitch = pitchSpeed;
         
-        int[] arr = { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5 };
+        int[] arr = { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6 };
         for (int i = arr.Length - 1; i > 0; i--)
         {
             int j = UnityEngine.Random.Range(0, i + 1);
@@ -53,7 +55,7 @@ public class Board : MonoBehaviour
         startRot = new List<float>();
         tmpG = new List<GameObject>();
         
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < cardCnt; i++)
         {
             tmpG.Add(Instantiate(card, this.transform));
             float x = (i % 4) * 1.4f - 2.1f;
@@ -77,7 +79,7 @@ public class Board : MonoBehaviour
         startV2.Reverse();
 
         // 날아가는 시간 세팅
-        cardTotalTime = cardTime * 9 + 1.0f; // 카드 날리는 간격 * 카드 인덱스만큼 + 1초(현재 1초동안 날아감)
+        cardTotalTime = cardTime * (cardCnt - 1) + 1.0f; // 카드 날리는 간격 * 카드 인덱스만큼 + 1초(현재 1초동안 날아감)
     }
 
     // Update is called once per frame
@@ -87,9 +89,9 @@ public class Board : MonoBehaviour
         {
             lerpTime += Time.deltaTime;
             // 카드 뿌려보기
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < cardCnt; i++)
             {
-                int tmpI = cardTime == 0.0f ? 10 : (int)(lerpTime / cardTime); // cardTime이 0이라면 바로 다 나가도록
+                int tmpI = cardTime == 0.0f ? cardCnt : (int)(lerpTime / cardTime); // cardTime이 0이라면 바로 다 나가도록
                 if (tmpI < i) return;
 
                 // 실제 보간용 float 변수
@@ -113,7 +115,7 @@ public class Board : MonoBehaviour
             if (lerpTime > cardTotalTime)
             {
                 lerpTime = -1f; // 업데이트 방지용
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < cardCnt; i++)
                 {
                     tmpG[i].GetComponent<Card>().anim.speed = 1.0f;
                     tmpG[i].GetComponent<Card>().cardState = Card.CardState.Ready;

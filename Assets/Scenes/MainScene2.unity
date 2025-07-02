@@ -2069,6 +2069,7 @@ MonoBehaviour:
   pitchSpeed: 1.7
   cardTime: 0.25
   cardTotalTime: 5.5
+  cardCnt: 12
 --- !u!4 &1566358446
 Transform:
   m_ObjectHideFlags: 0
@@ -2826,7 +2827,6 @@ MonoBehaviour:
   timeTxt: {fileID: 920264287}
   ComboTxt: {fileID: 784010345}
   Combo: 0
-  cardCount: 10
   startTime: 30
 --- !u!4 &1964106997
 Transform:

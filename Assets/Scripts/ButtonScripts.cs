@@ -6,6 +6,8 @@ public class ButtonScripts : MonoBehaviour
 {
     public void SelectToStage()
     {
+        // 선택 패널 비활성화
+        GameManager.instance.selectPanel.SetActive(false);
         SceneManager.LoadScene("StageScene");
     }
     public void RetryButton()
