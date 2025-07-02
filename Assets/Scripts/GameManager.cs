@@ -7,11 +7,17 @@ using Unity.Burst.Intrinsics;
 
 public class GameManager : MonoBehaviour
 {
+    public AudioSource bgmAudioSource;
+    public AudioClip normalBGM;
+    public AudioClip warningBGM;
     public Button Retry;
     public static GameManager instance;
     public RawImage videoDisplay;
     public VideoPlayer videoPlayer;
     public VideoClip[] endingVideos;
+
+    private bool isWarningBGMPlaying = false;
+
 
     public enum GameProgress
     {
@@ -38,6 +44,15 @@ public class GameManager : MonoBehaviour
             instance = this;
         }
     }
+
+    void Start()
+    {
+        bgmAudioSource.clip = normalBGM;
+        bgmAudioSource.loop = true;
+        bgmAudioSource.volume = 0.3f;
+        bgmAudioSource.Play();
+    }
+
 
     void Update()
     {
@@ -69,7 +84,40 @@ public class GameManager : MonoBehaviour
 
             case GameProgress.Failed:
                 Retry.gameObject.SetActive(true);
+                timeTxt.text = "�ð� �ʰ�!";
                 break;
+        }
+        if (time <= 5f)
+        {
+            timeTxt.color = Color.red;
+        }
+        else if (time < 10f)
+        {
+            timeTxt.color = new Color(1f, 0.5f, 0f);
+        }
+        else
+        {
+            timeTxt.color = Color.black;
+        }
+
+        if (time <= 10f && !isWarningBGMPlaying)
+        {
+            bgmAudioSource.Stop();
+            bgmAudioSource.clip = warningBGM;
+            bgmAudioSource.volume = 0.2f;
+            bgmAudioSource.Play();
+            isWarningBGMPlaying = true;
+        }
+        else if (time > 10f && isWarningBGMPlaying)
+        {
+            bgmAudioSource.Stop();
+            bgmAudioSource.clip = normalBGM;
+            bgmAudioSource.Play();
+            isWarningBGMPlaying = false;
+        }
+        if ((progress == GameProgress.EndGame || progress == GameProgress.Failed) && bgmAudioSource.isPlaying)
+        {
+            bgmAudioSource.Stop();
         }
     }
 
@@ -82,7 +130,7 @@ public class GameManager : MonoBehaviour
             secondCard.DestroyCard();
             cardCount -= 2;
 
-            Debug.Log($"남은 카드 수: {cardCount}");
+            Debug.Log($"���� ī�� ��: {cardCount}");
             
             
                 Combo++;
@@ -93,7 +141,7 @@ public class GameManager : MonoBehaviour
             {
                 progress = GameProgress.EndGame;
                 //Time.timeScale = 0.0f;
-                // 넘어가는 유예시간 주기
+                // �Ѿ�� �����ð� �ֱ�
                 time = 0.0f;
                 //endTxt.SetActive(false);
                 ChallengeManager.instance.OnGameClearedEarly(time);
