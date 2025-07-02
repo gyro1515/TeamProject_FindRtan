@@ -26,6 +26,7 @@ public class Card : MonoBehaviour
     protected AudioSource audioSource;
     public AudioClip flipClip;
     public AudioClip correctClip;
+    public AudioClip errorClip;
 
 
     private void Start()
@@ -99,9 +100,12 @@ public class Card : MonoBehaviour
         back.SetActive(false);
         front.SetActive(true);
     }
-
     public void PlayCorrectSound()
     {
         audioSource.PlayOneShot(correctClip);
+    }
+    public void PlayErrorSount()
+    {
+        audioSource.PlayOneShot(errorClip);
     }
 }

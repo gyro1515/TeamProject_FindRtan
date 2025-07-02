@@ -80,10 +80,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            firstCard.PlayErrorSount();
             firstCard.CloseCard();
             secondCard.CloseCard();
-
-
         }
 
         firstCard = null;
