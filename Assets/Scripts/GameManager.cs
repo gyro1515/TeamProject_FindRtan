@@ -30,6 +30,12 @@ public class GameManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
         }
     }
 
@@ -39,8 +45,10 @@ public class GameManager : MonoBehaviour
         switch (progress)
         {
             case GameProgress.EndGame:
+                //마지막 스테이지 클리어>즉시 GameOverScene로드
+                Time.timeScale = 1f;
                 SceneManager.LoadScene("GameOverScene");
-                Debug.Log("End");
+                //Debug.Log("End");
                 break;
             case GameProgress.StartGame:
                 time -= Time.deltaTime;
@@ -55,12 +63,12 @@ public class GameManager : MonoBehaviour
             case GameProgress.Failed:   
                 Retry.gameObject.SetActive(true);
                 break;
-            //case GameProgress.NextStage:
+            case GameProgress.NextStage:
                 //다음 스테이지 이름이 "MainScene1", "MainScene2"
                 //int nextStage = currentStageIndex + 1;
                 //string nextSceneName = "MainScene"+ nextStage;
                 //SceneManager.LoadScene(nextSceneName);
-                //break;
+                break;
             default:
                 break;
         }
@@ -74,17 +82,28 @@ public class GameManager : MonoBehaviour
             firstCard.DestroyCard();
             secondCard.DestroyCard();
             cardCount -= 2;
-            Debug.Log($"End{cardCount}");
+            //Debug.Log($"End{cardCount}");
             if (cardCount == 0)
             {
-                // 마지막 스테이지인지 체크
-                progress = GameProgress.NextStage;
-                // 다음 스테이지 해금
-                PlayerPrefs.SetInt("StageUnlocked_1", 1); // (currentStageIndex + 1)
-                PlayerPrefs.Save();
+                // 마지막 스테이지
+                if(currentStageIndex + 1 >= totalStageCount)
+                {
+                    //마지막 스테이지 완료 > 게임오버씬으로 전환
+                    progress = GameProgress.EndGame;
+                }
+                else
+                {
+                    // 마지막 스테이지인지 체크
+                    progress = GameProgress.NextStage;
 
-                //1초 딜레이 후 판넬 활성화(코루틴사용)
-                StartCoroutine(ShowSelectPanelWithDelay());
+                    // 다음 스테이지 해금
+                    PlayerPrefs.SetInt("StageUnlocked_" + (currentStageIndex + 1), 1);
+                    PlayerPrefs.Save();
+
+                    //1초 딜레이 후 판넬 활성화(코루틴사용)
+                    StartCoroutine(ShowSelectPanelWithDelay());
+                }
+                   
 
                 //게임 진행을 멈추고 싶으면
                 //Time.timeScale = 0.0f;
@@ -95,8 +114,6 @@ public class GameManager : MonoBehaviour
         {
             firstCard.CloseCard();
             secondCard.CloseCard();
-
-
         }
 
         firstCard = null;
@@ -106,7 +123,8 @@ public class GameManager : MonoBehaviour
     // 코루틴 함수 추가
     private IEnumerator ShowSelectPanelWithDelay()
     {
-        yield return new WaitForSeconds(1f); // 1초 대기
+        //타임스케일이 0이라도 돌아가는 리얼타임 대기
+        yield return new WaitForSeconds(1f); 
         if (selectPanel != null) selectPanel.SetActive(true);
         Time.timeScale = 0.0f; // 게임 멈춤
 
@@ -121,4 +139,6 @@ public class GameManager : MonoBehaviour
         return PlayerPrefs.GetInt("StageUnlocked_"+ stageIndex, 0) == 1;
     }
     
+    
+
 }
