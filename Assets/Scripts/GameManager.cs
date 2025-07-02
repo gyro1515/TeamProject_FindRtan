@@ -257,8 +257,8 @@ public class GameManager : MonoBehaviour
                     Debug.Log("next stage");
                     // 마지막 스테이지인지 체크
                     progress = GameProgress.NextStage;
-                    currentStageIndex++;
                     // 다음 스테이지 해금
+                    currentStageIndex++;
                     /*PlayerPrefs.SetInt("StageUnlocked_" + (currentStageIndex + 1), 1);
                     PlayerPrefs.Save();*/
 
