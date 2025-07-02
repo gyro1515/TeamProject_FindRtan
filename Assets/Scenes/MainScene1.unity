@@ -2476,9 +2476,10 @@ MonoBehaviour:
   videoPlayer: {fileID: 0}
   endingVideos: []
   curBoard: {fileID: 1566358445}
+  stageButtons: []
   currentStageIndex: 0
   totalStageCount: 2
-  selectPanel: {fileID: 0}
+  selectPanel: {fileID: 2128108869}
   progress: 0
   firstCard: {fileID: 0}
   secondCard: {fileID: 0}
@@ -2486,7 +2487,7 @@ MonoBehaviour:
   ComboTxt: {fileID: 784010345}
   Combo: 0
   cardCount: 10
-  startTime: 12
+  startTime: 30
 --- !u!4 &1964106997
 Transform:
   m_ObjectHideFlags: 0
