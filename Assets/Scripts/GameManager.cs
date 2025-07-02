@@ -184,8 +184,6 @@ public class GameManager : MonoBehaviour
 
             default:
                 break;
-
-
         }
         
         if ((progress == GameProgress.EndGame || progress == GameProgress.Failed) && bgmAudioSource.isPlaying)
