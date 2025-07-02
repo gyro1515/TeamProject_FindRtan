@@ -998,6 +998,9 @@ MonoBehaviour:
   normalBGM: {fileID: 8300000, guid: 9d287f2ee365d3f4cbfe5407594d0ce1, type: 3}
   warningBGM: {fileID: 8300000, guid: 6321c1e630311114e849d16592c504eb, type: 3}
   Retry: {fileID: 0}
+  fastImage: {fileID: 0}
+  normalImage: {fileID: 0}
+  slowImage: {fileID: 0}
   videoDisplay: {fileID: 0}
   videoPlayer: {fileID: 0}
   endingVideos: []

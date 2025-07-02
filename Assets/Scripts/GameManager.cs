@@ -40,13 +40,15 @@ public class GameManager : MonoBehaviour
 
     public enum GameProgress
     {
-        SettingCard, EndGame, StartGame, Failed, NextStage, SelectStage
+        SettingCard, EndGame, StartGame, Failed, NextStage, SelectStage,
     }
     //스테이지 변수 추가
     public int currentStageIndex = 0; // 0번부터 시작, 빌드 세팅 순서에 맞게
     public int totalStageCount = 2; // 전체 스테이지 개수
     //panel 변수 추가
     public GameObject selectPanel; // 인스펙터에서 스테이지 판넬 오브젝트 할당
+    // 스테이지 버튼 활성화용 변수
+    bool isFirstSetStageBtn = true;
 
     public GameProgress progress = GameProgress.SettingCard;
     public Card firstCard;
@@ -123,10 +125,11 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        //스테이지 인덱스 초기화
+        if (isFirstSetStageBtn) { RefreshButtonState(); isFirstSetStageBtn = false; }
 
         if (timeTxt == null) return;
-        //스테이지 인덱스 초기화
-        RefreshButtonState();
+        
         switch (progress)
         {
             case GameProgress.SettingCard:
@@ -240,7 +243,6 @@ public class GameManager : MonoBehaviour
             if (cardCount == 0)
             {
                 ShowClearImageBasedOnTime();
-
                 // 마지막 스테이지
                 if (currentStageIndex + 1 >= totalStageCount)
                 {
@@ -255,10 +257,10 @@ public class GameManager : MonoBehaviour
                     Debug.Log("next stage");
                     // 마지막 스테이지인지 체크
                     progress = GameProgress.NextStage;
-
+                    currentStageIndex++;
                     // 다음 스테이지 해금
-                    PlayerPrefs.SetInt("StageUnlocked_" + (currentStageIndex + 1), 1);
-                    PlayerPrefs.Save();
+                    /*PlayerPrefs.SetInt("StageUnlocked_" + (currentStageIndex + 1), 1);
+                    PlayerPrefs.Save();*/
 
                     progress = GameProgress.SelectStage;
                     //1초 딜레이 후 판넬 활성화(코루틴사용)
@@ -293,6 +295,7 @@ public class GameManager : MonoBehaviour
     }
     void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미지
     {
+        if (fastImage == null || normalImage == null || slowImage == null) return;
         fastImage.SetActive(false);
         normalImage.SetActive(false);
         slowImage.SetActive(false);
@@ -338,13 +341,14 @@ public class GameManager : MonoBehaviour
     // 스테이지 로드 함수
     public void RefreshButtonState()
     {
-        
+        Debug.Log("currentStageIndex: " + currentStageIndex);
+
         foreach (var sb in stageButtons)
         {
-           
             bool unlocked = (sb.stageNumber <= 1 + instance.currentStageIndex);
-                //|| PlayerPrefs.GetInt("StageUnlocked_" + (sb.stageNumber - 1), 0) == 1;
+            //|| PlayerPrefs.GetInt("StageUnlocked_" + (sb.stageNumber - 1), 0) == 1;
 
+            Debug.Log("Button: " + sb.stageNumber + " " + unlocked);
             // 보이기/숨기기
             sb.button.gameObject.SetActive(unlocked);
             sb.button.interactable = unlocked;
@@ -402,5 +406,6 @@ public class GameManager : MonoBehaviour
             instance.setCardTime = instance.curBoard.cardTotalTime;
         }
         instance.stageButtons = stageButtons;
+        instance.isFirstSetStageBtn = isFirstSetStageBtn;
     }
 }
