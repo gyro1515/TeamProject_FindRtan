@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental;
 using UnityEngine;
@@ -21,7 +21,7 @@ public class ChallengeManager : MonoBehaviour
         if (!Lose)
         {
             Lose = true;
-            Debug.Log("초 단기 기억상실증");
+            Debug.Log("잘봐 이게 클릭이야");
         }
     }
     public void OnGameClearedEarly(float timeLeft)
@@ -55,7 +55,7 @@ public class ChallengeManager : MonoBehaviour
         else if (elapsedTime <= 25f && !Win)
         {
             
-            Debug.Log("잘봐 이게 클릭이야");
+            Debug.Log("아슬아슬");
             index = 3;
         }
     }
