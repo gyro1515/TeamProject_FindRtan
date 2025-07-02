@@ -64,10 +64,11 @@ public class GameManager : MonoBehaviour
                 {
                     SceneManager.LoadScene("GameOverScene");
 
-                if (!gameOverTriggered)
-                {
-                    gameOverTriggered = true;
-                    Invoke("GoToGameOver", 5.0f);
+                    if (!gameOverTriggered)
+                    {
+                        gameOverTriggered = true;
+                        Invoke("GoToGameOver", 5.0f);
+                    }
                 }
                 break;
 
@@ -84,9 +85,9 @@ public class GameManager : MonoBehaviour
 
             case GameProgress.Failed:
                 Retry.gameObject.SetActive(true);
-                timeTxt.text = "�ð� �ʰ�!";
+                timeTxt.text = "시간 초과!";
                 break;
-        }
+        }   
         if (time <= 5f)
         {
             timeTxt.color = Color.red;
@@ -119,6 +120,7 @@ public class GameManager : MonoBehaviour
         {
             bgmAudioSource.Stop();
         }
+                
     }
 
     public void Matched()
@@ -130,7 +132,7 @@ public class GameManager : MonoBehaviour
             secondCard.DestroyCard();
             cardCount -= 2;
 
-            Debug.Log($"���� ī�� ��: {cardCount}");
+            Debug.Log($"남은 카드 수: {cardCount}");
             
             
                 Combo++;
@@ -141,7 +143,7 @@ public class GameManager : MonoBehaviour
             {
                 progress = GameProgress.EndGame;
                 //Time.timeScale = 0.0f;
-                // �Ѿ�� �����ð� �ֱ�
+                // 넘어가는 유예시간 주기
                 time = 0.0f;
                 //endTxt.SetActive(false);
                 ChallengeManager.instance.OnGameClearedEarly(time);
