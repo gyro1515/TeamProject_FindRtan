@@ -10,7 +10,8 @@ using Unity.Burst.Intrinsics;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public AudioSource bgmAudioSource;
+    //public AudioSource bgmAudioSource;
+    AudioSource bgmAudioSource;
     public AudioClip normalBGM;
     public AudioClip warningBGM;
     public Button Retry;
@@ -56,20 +57,45 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Destroy(instance.gameObject);
-            instance = this;
-            return;
+            CopyToGameInstace();
+            if (bgmAudioSource)
+            {
+                Debug.Log("On");
+
+            }
+            else
+            {
+                Debug.Log("Off");
+
+            }
+            Destroy(this.gameObject);
+            if (!instance.bgmAudioSource.isPlaying)
+            {
+                instance.bgmAudioSource.clip = normalBGM;
+                instance.bgmAudioSource.loop = true;
+                instance.bgmAudioSource.volume = 0.3f;
+                instance.bgmAudioSource.Play();
+            }
         }
     }
 
     void Start()
     {
-        if(bgmAudioSource != null && !instance.bgmAudioSource.isPlaying)
+        //if(bgmAudioSource != null && !instance.bgmAudioSource.isPlaying)
+        bgmAudioSource = GetComponent<AudioSource>();
+        Debug.Log("Setting");
+
+        if (bgmAudioSource != null)
         {
             bgmAudioSource.clip = normalBGM;
             bgmAudioSource.loop = true;
             bgmAudioSource.volume = 0.3f;
             bgmAudioSource.Play();
+            Debug.Log("PlaySound");
+        }
+        else
+        {
+            Debug.Log("No");
         }
         progress = GameProgress.SettingCard;
     }
@@ -77,6 +103,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (timeTxt == null) return;
         switch (progress)
         {
             case GameProgress.SettingCard:
@@ -244,20 +271,40 @@ public class GameManager : MonoBehaviour
        
     }
 
-
     public bool IsStageUnlocked(int stageIndex)
     {
         if (stageIndex == 0) return true;
         return PlayerPrefs.GetInt("StageUnlocked_"+ stageIndex, 0) == 1;
     }
     
-    
-
-
-
     void GoToGameOver()
     {
-        
         SceneManager.LoadScene("GameOverScene");
+    }
+
+    void CopyToGameInstace()
+    {
+        instance.normalBGM = normalBGM;
+        instance.warningBGM = warningBGM;
+        instance.Retry = Retry;
+        instance.videoDisplay = videoDisplay;
+        instance.videoPlayer = videoPlayer;
+        instance.endingVideos = endingVideos;
+        instance.isWarningBGMPlaying = isWarningBGMPlaying;
+        instance.currentStageIndex = currentStageIndex;
+        instance.totalStageCount = totalStageCount;
+        instance.selectPanel = selectPanel;
+        instance.progress = progress;
+        instance.firstCard = firstCard;
+        instance.secondCard = secondCard;
+        instance.timeTxt = timeTxt;
+        instance.ComboTxt = ComboTxt;
+        instance.Combo = Combo;
+        instance.cardCount = cardCount;
+        instance.startTime = startTime;
+        instance.time = time;
+        instance.gameOverTriggered = gameOverTriggered;
+        instance.Win = Win;
+        instance.setCardTime = setCardTime;
     }
 }

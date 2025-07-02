@@ -1058,10 +1058,11 @@ MonoBehaviour:
   firstCard: {fileID: 0}
   secondCard: {fileID: 0}
   timeTxt: {fileID: 0}
-  endTxt: {fileID: 0}
   ComboTxt: {fileID: 0}
   Combo: 0
   cardCount: 10
+  startTime: 10
+  setCardTime: 5.5
 --- !u!4 &1782226354
 Transform:
   m_ObjectHideFlags: 0
