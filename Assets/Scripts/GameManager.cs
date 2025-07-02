@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public RawImage videoDisplay;
     public VideoPlayer videoPlayer;
     public VideoClip[] endingVideos;
+    public Board curBoard;
 
     private bool isWarningBGMPlaying = false;
 
@@ -45,8 +46,8 @@ public class GameManager : MonoBehaviour
     float time = 0.0f;
     bool gameOverTriggered = false;
     private bool Win = false;
-    // 카드 배치 시간
-    public float setCardTime = 5.5f;
+    // 카드 배치 시간, CopyToGameInstace()에서 자동으로 설정 됨
+    float setCardTime = 0.0f;
 
     private void Awake()
     {
@@ -54,20 +55,21 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            //Debug.Log("On" + " " + gameObject.GetInstanceID() + " " + instance.gameObject.GetInstanceID());
         }
         else
         {
-            CopyToGameInstace();
+            
             if (bgmAudioSource)
             {
-                Debug.Log("On");
-
+                Debug.Log("On" + gameObject.GetInstanceID());
             }
             else
             {
-                Debug.Log("Off");
-
+                Debug.Log("Off" + gameObject.GetInstanceID());
             }
+            //CopyToGameInstace();
+            // CopyToGameInstace() 내용은 -> OnDestroy로 이전
             Destroy(this.gameObject);
             if (!instance.bgmAudioSource.isPlaying)
             {
@@ -184,8 +186,6 @@ public class GameManager : MonoBehaviour
 
             default:
                 break;
-
-
         }
         
         if ((progress == GameProgress.EndGame || progress == GameProgress.Failed) && bgmAudioSource.isPlaying)
@@ -281,8 +281,7 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene("GameOverScene");
     }
-
-    void CopyToGameInstace()
+    private void OnDestroy()
     {
         instance.normalBGM = normalBGM;
         instance.warningBGM = warningBGM;
@@ -305,6 +304,7 @@ public class GameManager : MonoBehaviour
         instance.time = time;
         instance.gameOverTriggered = gameOverTriggered;
         instance.Win = Win;
-        instance.setCardTime = setCardTime;
+        instance.curBoard = curBoard;
+        instance.setCardTime = instance.curBoard.cardTotalTime;
     }
 }
