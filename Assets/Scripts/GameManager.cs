@@ -35,9 +35,7 @@ public class GameManager : MonoBehaviour
     //public StageButton[] stageButtons;
     public StageButton[] stageButtons = new StageButton[2];
 
-
     private bool isWarningBGMPlaying = false;
-
 
     public enum GameProgress
     {
@@ -75,41 +73,13 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             //Debug.Log("On" + " " + gameObject.GetInstanceID() + " " + instance.gameObject.GetInstanceID());
         }
-        // 논리적으로 스타트로 옮기는 게 맞는 거 같아 아래 내용은 Start()로 옮겼습니다
-        /*else
+        else
         {
-            
-            *//*if (bgmAudioSource)
-            {
-                Debug.Log("On" + gameObject.GetInstanceID());
-            }
-            else
-            {
-                Debug.Log("Off" + gameObject.GetInstanceID());
-            }*//*
-            
-            // CopyToGameInstace() 내용은 -> OnDestroy로 이전
-            Destroy(this.gameObject);
-            if (!instance.bgmAudioSource.isPlaying)
-            {
-                instance.bgmAudioSource.clip = normalBGM;
-                instance.bgmAudioSource.loop = true;
-                instance.bgmAudioSource.volume = 0.3f;
-                instance.bgmAudioSource.Play();
-            }
-        }*/
-    }
-
-    void Start()
-    {
-        // instance가 있고 이 인스턴스가 자신이 아닐때만 인스턴스에 복사하고, 자신은 삭제하기
-        if (instance != null && instance != this)
-        {
-            CopyToGameInstace();
+            CopyToGameInstace(); // OnDestroy로 실행하면 한 프레임을 버리는 것과 같아 다시 Awake()에서 복사를 했습니다.
             Destroy(this.gameObject);
             if (instance.bgmAudioSource != null)
             {
-                if(!instance.bgmAudioSource.isPlaying)
+                if (!instance.bgmAudioSource.isPlaying)
                 {
                     instance.bgmAudioSource.clip = normalBGM;
                     instance.bgmAudioSource.loop = true;
@@ -125,21 +95,15 @@ public class GameManager : MonoBehaviour
                     instance.bgmAudioSource.Play();
                 }
             }
-            /*if (instance.bgmAudioSource && (!instance.bgmAudioSource.isPlaying || instance.bgmAudioSource.clip == warningBGM))
-            {
-                instance.bgmAudioSource.clip = normalBGM;
-                instance.bgmAudioSource.loop = true;
-                instance.bgmAudioSource.volume = 0.3f;
-                instance.bgmAudioSource.Play();
-            }*/
-            return; // 이 아래 실행 x
         }
+    }
+
+    void Start()
+    {
+        // Awake()에서 Destroy시 Start()실행 안됨
         
-        //스테이지 인덱스 초기화
-        //RefreshButtonState();
-        //if(bgmAudioSource != null && !instance.bgmAudioSource.isPlaying)
         bgmAudioSource = GetComponent<AudioSource>();
-        Debug.Log("Setting");
+        //Debug.Log("Setting");
 
         if (bgmAudioSource != null)
         {
@@ -154,9 +118,11 @@ public class GameManager : MonoBehaviour
             //Debug.Log("No");
         }
         progress = GameProgress.SettingCard;
+        if (curBoard)
+        {
+            setCardTime = curBoard.cardTotalTime;
+        }
     }
-
-
 
     void Update()
     {

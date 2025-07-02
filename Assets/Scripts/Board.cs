@@ -27,11 +27,15 @@ public class Board : MonoBehaviour
     // 카드 총 개수
     [SerializeField] int cardCnt = 12;
 
-    void Start()
+    private void Awake()
     {
         sound = GetComponent<AudioSource>();
-        if (sound != null ) sound.pitch = pitchSpeed;
-        
+        if (sound != null) sound.pitch = pitchSpeed;
+        // 날아가는 시간 세팅
+        cardTotalTime = cardTime * (cardCnt - 1) + 1.0f; // 카드 날리는 간격 * 카드 인덱스만큼 + 1초(현재 1초동안 날아감)
+    }
+    void Start()
+    {
         int[] arr = { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6 };
         for (int i = arr.Length - 1; i > 0; i--)
         {
@@ -78,8 +82,7 @@ public class Board : MonoBehaviour
         endV2.Reverse();
         startV2.Reverse();
 
-        // 날아가는 시간 세팅
-        cardTotalTime = cardTime * (cardCnt - 1) + 1.0f; // 카드 날리는 간격 * 카드 인덱스만큼 + 1초(현재 1초동안 날아감)
+        
     }
 
     // Update is called once per frame
