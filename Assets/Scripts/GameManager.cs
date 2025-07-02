@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.UI;
 using System.Collections;
@@ -18,12 +18,29 @@ public class GameManager : MonoBehaviour
     public GameObject fastImage;
     public GameObject normalImage;
     public GameObject slowImage;
+    public RawImage videoDisplay;
+    public VideoPlayer videoPlayer;
+    public VideoClip[] endingVideos;
+    public Board curBoard;
+
+    //스테이지 선택 버튼 구조체
+    [System.Serializable]
+    public struct StageButton
+    {
+        public Button button;
+        public int stageNumber;
+    }
+    // 스테이지 선택 버튼 배열
+    //public StageButton[] stageButtons;
+    public StageButton[] stageButtons = new StageButton[2];
+
+
     private bool isWarningBGMPlaying = false;
 
 
     public enum GameProgress
     {
-        SettingCard, EndGame, StartGame, Failed, NextStage
+        SettingCard, EndGame, StartGame, Failed, NextStage, SelectStage
     }
     //스테이지 변수 추가
     public int currentStageIndex = 0; // 0번부터 시작, 빌드 세팅 순서에 맞게
@@ -44,8 +61,8 @@ public class GameManager : MonoBehaviour
     float time = 0.0f;
     bool gameOverTriggered = false;
     private bool Win = false;
-    // 카드 배치 시간
-    public float setCardTime = 5.5f;
+    // 카드 배치 시간, CopyToGameInstace()에서 자동으로 설정 됨
+    float setCardTime = 0.0f;
 
     private void Awake()
     {
@@ -53,20 +70,21 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            //Debug.Log("On" + " " + gameObject.GetInstanceID() + " " + instance.gameObject.GetInstanceID());
         }
         else
         {
-            CopyToGameInstace();
+            
             if (bgmAudioSource)
             {
-                Debug.Log("On");
-
+                Debug.Log("On" + gameObject.GetInstanceID());
             }
             else
             {
-                Debug.Log("Off");
-
+                Debug.Log("Off" + gameObject.GetInstanceID());
             }
+            //CopyToGameInstace();
+            // CopyToGameInstace() 내용은 -> OnDestroy로 이전
             Destroy(this.gameObject);
             if (!instance.bgmAudioSource.isPlaying)
             {
@@ -80,6 +98,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        //스테이지 인덱스 초기화
+        //RefreshButtonState();
         //if(bgmAudioSource != null && !instance.bgmAudioSource.isPlaying)
         bgmAudioSource = GetComponent<AudioSource>();
         Debug.Log("Setting");
@@ -100,9 +120,13 @@ public class GameManager : MonoBehaviour
     }
 
 
+
     void Update()
     {
+
         if (timeTxt == null) return;
+        //스테이지 인덱스 초기화
+        RefreshButtonState();
         switch (progress)
         {
             case GameProgress.SettingCard:
@@ -180,11 +204,15 @@ public class GameManager : MonoBehaviour
                 Retry.gameObject.SetActive(true);
                 timeTxt.text = "시간 초과!";
                 break;
-
+            case GameProgress.SelectStage:
+                // 스테이지 선택 패널 활성화
+                if (selectPanel != null)
+                {
+                    selectPanel.SetActive(true);
+                }
+                break;
             default:
                 break;
-
-
         }
         
         if ((progress == GameProgress.EndGame || progress == GameProgress.Failed) && bgmAudioSource.isPlaying)
@@ -216,6 +244,7 @@ public class GameManager : MonoBehaviour
                 // 마지막 스테이지
                 if (currentStageIndex + 1 >= totalStageCount)
                 {
+                    Debug.Log("clear");
                     //마지막 스테이지 완료 > 게임오버씬으로 전환
                     progress = GameProgress.EndGame;
                    
@@ -223,6 +252,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
+                    Debug.Log("next stage");
                     // 마지막 스테이지인지 체크
                     progress = GameProgress.NextStage;
 
@@ -230,14 +260,16 @@ public class GameManager : MonoBehaviour
                     PlayerPrefs.SetInt("StageUnlocked_" + (currentStageIndex + 1), 1);
                     PlayerPrefs.Save();
 
+                    progress = GameProgress.SelectStage;
                     //1초 딜레이 후 판넬 활성화(코루틴사용)
                     StartCoroutine(ShowSelectPanelWithDelay());
+
                 }
 
 
                 //게임 진행을 멈추고 싶으면
                 //Time.timeScale = 0.0f;
-                progress = GameProgress.EndGame;
+                //progress = GameProgress.EndGame;
                 //Time.timeScale = 0.0f;
                 // 넘어가는 유예시간 주기
                 time = 0.0f;
@@ -302,15 +334,46 @@ public class GameManager : MonoBehaviour
         if (stageIndex == 0) return true;
         return PlayerPrefs.GetInt("StageUnlocked_"+ stageIndex, 0) == 1;
     }
- 
 
+    // 스테이지 로드 함수
+    public void RefreshButtonState()
+    {
+        
+        foreach (var sb in stageButtons)
+        {
+           
+            bool unlocked = (sb.stageNumber <= 1 + instance.currentStageIndex);
+                //|| PlayerPrefs.GetInt("StageUnlocked_" + (sb.stageNumber - 1), 0) == 1;
+
+            // 보이기/숨기기
+            sb.button.gameObject.SetActive(unlocked);
+            sb.button.interactable = unlocked;
+
+            if (unlocked)
+            {
+                // 클릭 리스너 등록 (중복 방지)
+                sb.button.onClick.RemoveAllListeners();
+                sb.button.onClick.AddListener(() => LoadStage(sb.stageNumber));
+            }
+
+        }
+    }
+    
+    // 스테이지 로드 함수
+    public void LoadStage(int stageNumber)
+    {
+        //Debug.Log(currentStageIndex + " "+ stageNumber);
+        Time.timeScale = 1f;
+        GameManager.instance.currentStageIndex = stageNumber - 1;
+        SceneManager.LoadScene("MainScene" + stageNumber);
+       
+    }
 
     void GoToGameOver()
     {
         SceneManager.LoadScene("GameOverScene");
     }
-
-    void CopyToGameInstace()
+    private void OnDestroy()
     {
         instance.normalBGM = normalBGM;
         instance.warningBGM = warningBGM;
@@ -319,7 +382,7 @@ public class GameManager : MonoBehaviour
         instance.normalImage = normalImage; 
         instance.slowImage = slowImage;
         instance.isWarningBGMPlaying = isWarningBGMPlaying;
-        instance.currentStageIndex = currentStageIndex;
+        //instance.currentStageIndex = currentStageIndex;
         instance.totalStageCount = totalStageCount;
         instance.selectPanel = selectPanel;
         instance.progress = progress;
@@ -333,6 +396,11 @@ public class GameManager : MonoBehaviour
         instance.time = time;
         instance.gameOverTriggered = gameOverTriggered;
         instance.Win = Win;
-        instance.setCardTime = setCardTime;
+        if(curBoard != null)
+        {
+            instance.curBoard = curBoard;
+            instance.setCardTime = instance.curBoard.cardTotalTime;
+        }
+        instance.stageButtons = stageButtons;
     }
 }
