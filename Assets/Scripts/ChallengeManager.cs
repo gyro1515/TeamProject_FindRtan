@@ -21,7 +21,7 @@ public class ChallengeManager : MonoBehaviour
         if (!Lose)
         {
             Lose = true;
-            Debug.Log("¿ﬂ∫¡ ¿Ã∞‘ ≈¨∏Ø¿Ãæﬂ");
+            Debug.Log("Ï¥à Îã®Í∏∞ Í∏∞ÏñµÏÉÅÏã§Ï¶ù");
         }
     }
     public void OnGameClearedEarly(float timeLeft)
@@ -37,25 +37,25 @@ public class ChallengeManager : MonoBehaviour
         if (elapsedTime <= 10f && !Win)
         {
            
-            Debug.Log("ªÁ¿ÃπˆªÁ¿Ãƒ⁄");
+            Debug.Log("ÏÇ¨Ïù¥Î≤ÑÏÇ¨Ïù¥ÏΩî");
             index = 0;
         }
         else if (elapsedTime <= 15f && !Win)
          {
            
-            Debug.Log("∂◊¿Ã¡§µµ?");
+            Debug.Log("Ïπ¥ÎìúÎí§ÏßëÍ∏∞ Îã¨Ïù∏");
             index = 1;
          }
        else if (elapsedTime <= 20f && !Win)
         {
            
-            Debug.Log("πŸ∫∏");
+            Debug.Log("Ïπ¥ÎìúÎí§ÏßëÍ∏∞ ÏàòÏû¨");
             index = 2;
         }
         else if (elapsedTime <= 25f && !Win)
         {
             
-            Debug.Log("¿Ã∞≈≥™ πﬁæ∆∂Û!");
+            Debug.Log("ÏûòÎ¥ê Ïù¥Í≤å ÌÅ¥Î¶≠Ïù¥Ïïº");
             index = 3;
         }
     }
