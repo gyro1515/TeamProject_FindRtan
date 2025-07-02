@@ -1,30 +1,43 @@
 using UnityEngine;
+using UnityEngine.Video;
 using UnityEngine.UI;
+using System.Collections;
 using UnityEngine.SceneManagement;
-using System.Collections; //ÄÚ·çÆ¾¿ë using¹®
+using System.Collections; //ì½”ë£¨í‹´ìš© usingë¬¸
+using Unity.Burst.Intrinsics;
+
 
 public class GameManager : MonoBehaviour
 {
     public Button Retry;
     public static GameManager instance;
+    public RawImage videoDisplay;
+    public VideoPlayer videoPlayer;
+    public VideoClip[] endingVideos;
 
     public enum GameProgress
     {
-        EndGame, StartGame, Failed, NextStage
+        EndGame, StartGame, Failed
     }
-    //½ºÅ×ÀÌÁö º¯¼ö Ãß°¡
-    public int currentStageIndex = 0; // 0¹øºÎÅÍ ½ÃÀÛ, ºôµå ¼¼ÆÃ ¼ø¼­¿¡ ¸Â°Ô
-    public int totalStageCount = 2; // ÀüÃ¼ ½ºÅ×ÀÌÁö °³¼ö
-    //panel º¯¼ö Ãß°¡
-    public GameObject selectPanel; // ÀÎ½ºÆåÅÍ¿¡¼­ ½ºÅ×ÀÌÁö ÆÇ³Ú ¿ÀºêÁ§Æ® ÇÒ´ç
+    //ìŠ¤í…Œì´ì§€ ë³€ìˆ˜ ì¶”ê°€
+    public int currentStageIndex = 0; // 0ë²ˆë¶€í„° ì‹œì‘, ë¹Œë“œ ì„¸íŒ… ìˆœì„œì— ë§ê²Œ
+    public int totalStageCount = 2; // ì „ì²´ ìŠ¤í…Œì´ì§€ ê°œìˆ˜
+    //panel ë³€ìˆ˜ ì¶”ê°€
+    public GameObject selectPanel; // ì¸ìŠ¤í™í„°ì—ì„œ ìŠ¤í…Œì´ì§€ íŒë„¬ ì˜¤ë¸Œì íŠ¸ í• ë‹¹
 
     public GameProgress progress = GameProgress.StartGame;
     public Card firstCard;
     public Card secondCard;
     public Text timeTxt;
     public GameObject endTxt;
+    public Text ComboTxt;
+    public int Combo = 0;
     public int cardCount = 10;
+
     float time = 30.0f;
+    bool gameOverTriggered = false;
+    private bool Win = false;
+
     private void Awake()
     {
         if (instance == null)
@@ -39,40 +52,41 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     void Update()
     {
         switch (progress)
         {
             case GameProgress.EndGame:
-                //¸¶Áö¸· ½ºÅ×ÀÌÁö Å¬¸®¾î>Áï½Ã GameOverScene·Îµå
+
+                //ë§ˆì§€ë§‰ ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´>ì¦‰ì‹œ GameOverSceneë¡œë“œ
                 Time.timeScale = 1f;
-                SceneManager.LoadScene("GameOverScene");
-                //Debug.Log("End");
+                if (!gameOverTriggered)
+                {
+                    gameOverTriggered = true;
+                    Invoke("GoToGameOver", 5.0f);
+                }
                 break;
+
             case GameProgress.StartGame:
                 time -= Time.deltaTime;
-               
-                if(time <= 0.0f)
+                if (time <= 0.0f)
                 {
                     time = 0.0f;
                     progress = GameProgress.Failed;
+                    ChallengeManager.instance.OnGameFailed();
                 }
                 timeTxt.text = time.ToString("N2");
                 break;
-            case GameProgress.Failed:   
+
+            case GameProgress.Failed:
                 Retry.gameObject.SetActive(true);
                 break;
-            case GameProgress.NextStage:
-                //´ÙÀ½ ½ºÅ×ÀÌÁö ÀÌ¸§ÀÌ "MainScene1", "MainScene2"
-                //int nextStage = currentStageIndex + 1;
-                //string nextSceneName = "MainScene"+ nextStage;
-                //SceneManager.LoadScene(nextSceneName);
-                break;
+
             default:
                 break;
-        }
 
+
+        }
     }
 
     public void Matched()
@@ -82,53 +96,63 @@ public class GameManager : MonoBehaviour
             firstCard.DestroyCard();
             secondCard.DestroyCard();
             cardCount -= 2;
+
+
             //Debug.Log($"End{cardCount}");
+
+            Combo++;
+            ComboTxt.text = Combo.ToString();
+
             if (cardCount == 0)
             {
-                // ¸¶Áö¸· ½ºÅ×ÀÌÁö
-                if(currentStageIndex + 1 >= totalStageCount)
+                // ë§ˆì§€ë§‰ ìŠ¤í…Œì´ì§€
+                if (currentStageIndex + 1 >= totalStageCount)
                 {
-                    //¸¶Áö¸· ½ºÅ×ÀÌÁö ¿Ï·á > °ÔÀÓ¿À¹ö¾ÀÀ¸·Î ÀüÈ¯
+                    //ë§ˆì§€ë§‰ ìŠ¤í…Œì´ì§€ ì™„ë£Œ > ê²Œì„ì˜¤ë²„ì”¬ìœ¼ë¡œ ì „í™˜
                     progress = GameProgress.EndGame;
+                    ChallengeManager.instance.OnGameClearedEarly(time);
+                    endTxt.SetActive(false);
                 }
                 else
                 {
-                    // ¸¶Áö¸· ½ºÅ×ÀÌÁöÀÎÁö Ã¼Å©
+                    // ë§ˆì§€ë§‰ ìŠ¤í…Œì´ì§€ì¸ì§€ ì²´í¬
                     progress = GameProgress.NextStage;
 
-                    // ´ÙÀ½ ½ºÅ×ÀÌÁö ÇØ±İ
+                    // ë‹¤ìŒ ìŠ¤í…Œì´ì§€ í•´ê¸ˆ
                     PlayerPrefs.SetInt("StageUnlocked_" + (currentStageIndex + 1), 1);
                     PlayerPrefs.Save();
 
-                    //1ÃÊ µô·¹ÀÌ ÈÄ ÆÇ³Ú È°¼ºÈ­(ÄÚ·çÆ¾»ç¿ë)
+                    //1ì´ˆ ë”œë ˆì´ í›„ íŒë„¬ í™œì„±í™”(ì½”ë£¨í‹´ì‚¬ìš©)
                     StartCoroutine(ShowSelectPanelWithDelay());
                 }
-                   
 
-                //°ÔÀÓ ÁøÇàÀ» ¸ØÃß°í ½ÍÀ¸¸é
+
+                //ê²Œì„ ì§„í–‰ì„ ë©ˆì¶”ê³  ì‹¶ìœ¼ë©´
                 //Time.timeScale = 0.0f;
             }
-            
         }
         else
         {
             firstCard.CloseCard();
             secondCard.CloseCard();
+
+            Combo = 0;
+            ComboTxt.text = Combo.ToString();
         }
 
         firstCard = null;
         secondCard = null;
-
     }
-    // ÄÚ·çÆ¾ ÇÔ¼ö Ãß°¡
+    // ì½”ë£¨í‹´ í•¨ìˆ˜ ì¶”ê°€
     private IEnumerator ShowSelectPanelWithDelay()
     {
-        //Å¸ÀÓ½ºÄÉÀÏÀÌ 0ÀÌ¶óµµ µ¹¾Æ°¡´Â ¸®¾óÅ¸ÀÓ ´ë±â
+        //íƒ€ì„ìŠ¤ì¼€ì¼ì´ 0ì´ë¼ë„ ëŒì•„ê°€ëŠ” ë¦¬ì–¼íƒ€ì„ ëŒ€ê¸°
         yield return new WaitForSeconds(1f); 
         if (selectPanel != null) selectPanel.SetActive(true);
-        Time.timeScale = 0.0f; // °ÔÀÓ ¸ØÃã
+        Time.timeScale = 0.0f; // ê²Œì„ ë©ˆì¶¤
 
-        //Scene ÀüÈ¯¹æ½Ä(¿¹: StageSceneÀ¸·Î)
+
+    //Scene ì „í™˜ë°©ì‹(ì˜ˆ: StageSceneìœ¼ë¡œ)
        
     }
 
@@ -141,4 +165,11 @@ public class GameManager : MonoBehaviour
     
     
 
+
+
+    void GoToGameOver()
+    {
+        
+        SceneManager.LoadScene("GameOverScene");
+    }
 }
