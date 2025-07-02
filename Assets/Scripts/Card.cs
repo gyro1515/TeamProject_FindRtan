@@ -5,22 +5,29 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-    // 테스트용
-    //float tmpTime = 0;
-    //bool tmpIsOpen = false;
-
+    public enum CardState
+    {
+        Fly, Ready
+    }
+    public CardState cardState = CardState.Fly;
+    // 오더 인 레이어도 수정해보기
+    [SerializeField] public Canvas backCanvas;
+    [SerializeField] public SpriteRenderer backSprite;
 
     public int idx = 0;
     // 끄고 킬 카드 앞,뒤 면
     [SerializeField] GameObject front;
     [SerializeField] GameObject back;
     // 카드 애니메이션
-    [SerializeField] Animator anim;
+    [SerializeField] public Animator anim;
     // 앞면 이미지
     [SerializeField] SpriteRenderer frontImg;
     // 카드 뒤집기 사운드
-    AudioSource audioSource;
-    public AudioClip clip;
+    protected AudioSource audioSource;
+    public AudioClip flipClip;
+    public AudioClip correctClip;
+    public AudioClip errorClip;
+
 
     private void Start()
     {
@@ -32,37 +39,19 @@ public class Card : MonoBehaviour
         idx = num;
         frontImg.sprite = Resources.Load<Sprite>(idx.ToString());
         //frontImg.sprite = Resources.Load<Sprite>($"{idx}");
-        Debug.Log("card setting");
+        //Debug.Log("card setting");
     }
-    /*private void Update()
-    {
-        // 테스트용
-        tmpTime += Time.deltaTime;
-        if (tmpTime >= 1.0f && !tmpIsOpen) // 1초가 지나고 닫힌 상태일 때,
-        {
-            tmpTime = -0.2f;
-            tmpIsOpen = true;
-            audioSource.PlayOneShot(clip);
-            anim.SetBool("IsOpen", true);
-            OpenCardReady();
-        }
-        else if(tmpTime >= 1.0f && tmpIsOpen) // 1초가 지나고 열린 상태일 때,
-        {
-            tmpTime = 0.0f;
-            tmpIsOpen = false;
-            front.SetActive(false);
-            back.SetActive(true);
-            anim.SetBool("IsOpen", false);
-        }
-    }*/
+
     // 게임 매니저씬에서 가져와야 함
-    public void OpenCard()
+    public virtual void OpenCard()
     {
         // 게임 중이 아니라면 동작 금지
         if (GameManager.instance.progress != GameManager.GameProgress.StartGame) return;
+        // 날아가는 중이라면 동작 금지
+        if (cardState == CardState.Fly) return;
 
         //PlayOneShot()을 사용하면 다른 효과음끼리 겹치지 않음
-        audioSource.PlayOneShot(clip);
+        audioSource.PlayOneShot(flipClip);
         anim.SetBool("IsOpen", true);
         back.SetActive(false);
         front.SetActive(true);
@@ -91,11 +80,11 @@ public class Card : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void CloseCard()
+    public virtual void CloseCard()
     {
         Invoke("CloseCardInvoke", 1.0f);
     }
-    public void CloseCardInvoke()
+    public virtual void CloseCardInvoke()
     {
         front.SetActive(false);
         back.SetActive(true);
@@ -110,5 +99,13 @@ public class Card : MonoBehaviour
     {
         back.SetActive(false);
         front.SetActive(true);
+    }
+    public void PlayCorrectSound()
+    {
+        audioSource.PlayOneShot(correctClip);
+    }
+    public void PlayErrorSount()
+    {
+        audioSource.PlayOneShot(errorClip);
     }
 }

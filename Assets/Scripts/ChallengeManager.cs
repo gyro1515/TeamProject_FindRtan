@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental;
 using UnityEngine;
@@ -21,7 +21,8 @@ public class ChallengeManager : MonoBehaviour
         if (!Lose)
         {
             Lose = true;
-            Debug.Log("ÀßºÁ ÀÌ°Ô Å¬¸¯ÀÌ¾ß");
+            
+            Debug.Log("ì˜ ëª»í•´ë„ ê´œì°®ì•„");
         }
     }
     public void OnGameClearedEarly(float timeLeft)
@@ -37,25 +38,28 @@ public class ChallengeManager : MonoBehaviour
         if (elapsedTime <= 10f && !Win)
         {
            
-            Debug.Log("»çÀÌ¹ö»çÀÌÄÚ");
+            Debug.Log("ì‚¬ì´ë²„ì‚¬ì´ì½”");
             index = 0;
         }
         else if (elapsedTime <= 15f && !Win)
          {
            
-            Debug.Log("¶×ÀÌÁ¤µµ?");
+            Debug.Log("ì¹´ë“œë’¤ì§‘ê¸° ë‹¬ì¸");
+           
             index = 1;
          }
        else if (elapsedTime <= 20f && !Win)
         {
            
-            Debug.Log("¹Ùº¸");
+            Debug.Log("ì¹´ë“œë’¤ì§‘ê¸° ìˆ˜ì¬");
+            
             index = 2;
         }
         else if (elapsedTime <= 25f && !Win)
         {
             
-            Debug.Log("ÀÌ°Å³ª ¹Ş¾Æ¶ó!");
+            Debug.Log("ì•„ìŠ¬ì•„ìŠ¬");
+            
             index = 3;
         }
     }
