@@ -312,8 +312,14 @@ public class GameManager : MonoBehaviour
             slowImage.SetActive(true);
             Debug.Log("느린클리어 - photo");
         }
-
+        Invoke("HideImage", 1.5f);
        
+    }
+    void HideImage()
+    {
+        firstCard.PlayErrorSount();
+        firstCard.CloseCard();
+        secondCard.CloseCard();
     }
     // 코루틴 함수 추가
     private IEnumerator ShowSelectPanelWithDelay()
