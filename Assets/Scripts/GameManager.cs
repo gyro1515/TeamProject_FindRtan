@@ -3,17 +3,17 @@ using UnityEngine.Video;
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
-using System.Collections; //코루틴용 using문
+//using System.Collections; //코루틴용 using문
 using Unity.Burst.Intrinsics;
 
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
     public AudioSource bgmAudioSource;
     public AudioClip normalBGM;
     public AudioClip warningBGM;
     public Button Retry;
-    public static GameManager instance;
     public RawImage videoDisplay;
     public VideoPlayer videoPlayer;
     public VideoClip[] endingVideos;
@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
 
     public enum GameProgress
     {
-        EndGame, StartGame, Failed
+        SettingCard, EndGame, StartGame, Failed, NextStage
     }
     //스테이지 변수 추가
     public int currentStageIndex = 0; // 0번부터 시작, 빌드 세팅 순서에 맞게
@@ -31,18 +31,21 @@ public class GameManager : MonoBehaviour
     //panel 변수 추가
     public GameObject selectPanel; // 인스펙터에서 스테이지 판넬 오브젝트 할당
 
-    public GameProgress progress = GameProgress.StartGame;
+    public GameProgress progress = GameProgress.SettingCard;
     public Card firstCard;
     public Card secondCard;
     public Text timeTxt;
-    public GameObject endTxt;
+    //public GameObject endTxt;
     public Text ComboTxt;
     public int Combo = 0;
     public int cardCount = 10;
-
-    float time = 30.0f;
+    // 시간 관리
+    public float startTime = 30.0f;
+    float time = 0.0f;
     bool gameOverTriggered = false;
     private bool Win = false;
+    // 카드 배치 시간
+    public float setCardTime = 5.5f;
 
     private void Awake()
     {
@@ -53,17 +56,22 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(instance.gameObject);
+            instance = this;
             return;
         }
     }
 
     void Start()
     {
-        bgmAudioSource.clip = normalBGM;
-        bgmAudioSource.loop = true;
-        bgmAudioSource.volume = 0.3f;
-        bgmAudioSource.Play();
+        if(bgmAudioSource != null && !instance.bgmAudioSource.isPlaying)
+        {
+            bgmAudioSource.clip = normalBGM;
+            bgmAudioSource.loop = true;
+            bgmAudioSource.volume = 0.3f;
+            bgmAudioSource.Play();
+        }
+        progress = GameProgress.SettingCard;
     }
 
 
@@ -71,6 +79,15 @@ public class GameManager : MonoBehaviour
     {
         switch (progress)
         {
+            case GameProgress.SettingCard:
+                time += Time.deltaTime;
+                if (time >= setCardTime)
+                {
+                    time = startTime;
+                    progress = GameProgress.StartGame;
+                    //Debug.Log(time);
+                }
+                break;
             case GameProgress.EndGame:
 
                 //마지막 스테이지 클리어>즉시 GameOverScene로드
@@ -78,13 +95,12 @@ public class GameManager : MonoBehaviour
                 if (!gameOverTriggered)
                 // 타이머 누적
                 {
+                    //Debug.Log(time);
                     time += Time.deltaTime;
                 }
                 // 조건 만족시 한번만 실행
                 if (time >= 1.2f)
                 {
-                    SceneManager.LoadScene("GameOverScene");
-
                     if (!gameOverTriggered)
                     {
                         gameOverTriggered = true;
@@ -101,7 +117,37 @@ public class GameManager : MonoBehaviour
                     progress = GameProgress.Failed;
                     ChallengeManager.instance.OnGameFailed();
                 }
-                timeTxt.text = time.ToString("N2");
+                if (timeTxt != null)
+                {
+                    timeTxt.text = time.ToString("N2");
+                    if (time <= 5f)
+                    {
+                        timeTxt.color = Color.red;
+                    }
+                    else if (time < 10f)
+                    {
+                        timeTxt.color = new Color(1f, 0.5f, 0f);
+                    }
+                    else
+                    {
+                        timeTxt.color = Color.black;
+                    }
+                }
+                if (time <= 10f && !isWarningBGMPlaying)
+                {
+                    bgmAudioSource.Stop();
+                    bgmAudioSource.clip = warningBGM;
+                    bgmAudioSource.volume = 0.2f;
+                    bgmAudioSource.Play();
+                    isWarningBGMPlaying = true;
+                }
+                else if (time > 10f && isWarningBGMPlaying)
+                {
+                    bgmAudioSource.Stop();
+                    bgmAudioSource.clip = normalBGM;
+                    bgmAudioSource.Play();
+                    isWarningBGMPlaying = false;
+                }
                 break;
 
             case GameProgress.Failed:
@@ -113,35 +159,8 @@ public class GameManager : MonoBehaviour
                 break;
 
 
-        }   
-        if (time <= 5f)
-        {
-            timeTxt.color = Color.red;
         }
-        else if (time < 10f)
-        {
-            timeTxt.color = new Color(1f, 0.5f, 0f);
-        }
-        else
-        {
-            timeTxt.color = Color.black;
-        }
-
-        if (time <= 10f && !isWarningBGMPlaying)
-        {
-            bgmAudioSource.Stop();
-            bgmAudioSource.clip = warningBGM;
-            bgmAudioSource.volume = 0.2f;
-            bgmAudioSource.Play();
-            isWarningBGMPlaying = true;
-        }
-        else if (time > 10f && isWarningBGMPlaying)
-        {
-            bgmAudioSource.Stop();
-            bgmAudioSource.clip = normalBGM;
-            bgmAudioSource.Play();
-            isWarningBGMPlaying = false;
-        }
+        
         if ((progress == GameProgress.EndGame || progress == GameProgress.Failed) && bgmAudioSource.isPlaying)
         {
             bgmAudioSource.Stop();
@@ -161,7 +180,7 @@ public class GameManager : MonoBehaviour
             Debug.Log($"남은 카드 수: {cardCount}");
             
             
-                Combo++;
+            Combo++;
             ComboTxt.text = Combo.ToString();
 
             if (cardCount == 0)
@@ -172,7 +191,7 @@ public class GameManager : MonoBehaviour
                     //마지막 스테이지 완료 > 게임오버씬으로 전환
                     progress = GameProgress.EndGame;
                     ChallengeManager.instance.OnGameClearedEarly(time);
-                    endTxt.SetActive(false);
+                    //endTxt.SetActive(false);
                 }
                 else
                 {
@@ -196,7 +215,7 @@ public class GameManager : MonoBehaviour
                 time = 0.0f;
                 //endTxt.SetActive(false);
                 ChallengeManager.instance.OnGameClearedEarly(time);
-                endTxt.SetActive(false);
+                //endTxt.SetActive(false);
             }
         }
         else
@@ -218,7 +237,7 @@ public class GameManager : MonoBehaviour
         //타임스케일이 0이라도 돌아가는 리얼타임 대기
         yield return new WaitForSeconds(1f); 
         if (selectPanel != null) selectPanel.SetActive(true);
-        Time.timeScale = 0.0f; // 게임 멈춤
+        //Time.timeScale = 0.0f; // 게임 멈춤
 
 
     //Scene 전환방식(예: StageScene으로)

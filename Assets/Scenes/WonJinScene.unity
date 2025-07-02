@@ -377,14 +377,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4d0a3daf7885cc42a12dac372fdc2e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bgmAudioSource: {fileID: 0}
+  normalBGM: {fileID: 0}
+  warningBGM: {fileID: 0}
   Retry: {fileID: 202531739}
+  videoDisplay: {fileID: 0}
+  videoPlayer: {fileID: 0}
+  endingVideos: []
+  currentStageIndex: 0
+  totalStageCount: 2
+  selectPanel: {fileID: 0}
   progress: 1
   firstCard: {fileID: 0}
   secondCard: {fileID: 0}
   timeTxt: {fileID: 223534336}
   endTxt: {fileID: 0}
+  ComboTxt: {fileID: 0}
+  Combo: 0
   cardCount: 10
-  time: 20
 --- !u!4 &992847730
 Transform:
   m_ObjectHideFlags: 0
@@ -774,7 +784,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 8924988374156442082, guid: 6ba0bbbaa3b302b4385c223677c24776, type: 3}
   pitchSpeed: 1.7
-  cardTime: 0.25
+  cardTime: 1
 --- !u!4 &1487563027
 Transform:
   m_ObjectHideFlags: 0
