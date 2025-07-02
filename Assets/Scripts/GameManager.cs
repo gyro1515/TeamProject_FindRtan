@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.UI;
 using System.Collections;
@@ -44,6 +44,10 @@ public class GameManager : MonoBehaviour
         switch (progress)
         {
             case GameProgress.EndGame:
+                time += Time.deltaTime;
+                if (time >= 1.2f)
+                {
+                    SceneManager.LoadScene("GameOverScene");
 
                 if (!gameOverTriggered)
                 {
@@ -73,11 +77,12 @@ public class GameManager : MonoBehaviour
     {
         if (firstCard.idx == secondCard.idx)
         {
+            firstCard.PlayCorrectSound();
             firstCard.DestroyCard();
             secondCard.DestroyCard();
             cardCount -= 2;
 
-            Debug.Log($"���� ī�� ��: {cardCount}");
+            Debug.Log($"남은 카드 수: {cardCount}");
             
             
                 Combo++;
@@ -87,12 +92,17 @@ public class GameManager : MonoBehaviour
             if (cardCount == 0)
             {
                 progress = GameProgress.EndGame;
+                //Time.timeScale = 0.0f;
+                // 넘어가는 유예시간 주기
+                time = 0.0f;
+                //endTxt.SetActive(false);
                 ChallengeManager.instance.OnGameClearedEarly(time);
                 endTxt.SetActive(false);
             }
         }
         else
         {
+            firstCard.PlayErrorSount();
             firstCard.CloseCard();
             secondCard.CloseCard();
             Combo = 0;

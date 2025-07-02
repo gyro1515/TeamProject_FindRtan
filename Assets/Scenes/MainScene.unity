@@ -572,6 +572,7 @@ MonoBehaviour:
   ComboTxt: {fileID: 685502249}
   Combo: 0
   cardCount: 10
+  time: 20
 --- !u!4 &374919622
 Transform:
   m_ObjectHideFlags: 0
