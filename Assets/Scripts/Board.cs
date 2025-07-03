@@ -90,15 +90,11 @@ public class Board : MonoBehaviour
             Card tmpCard = tmpG[i].GetComponent<Card>();
             // 카드에 인덱스, 사진 등 세팅해주기
             tmpCard.Setting(arr[i]);
+            // 카드 애니메이션 재생 중지하기
             tmpCard.anim.speed = 0f;
+            // 첫번째 카드가 가장 위로 가게 하기
             tmpCard.backSprite.sortingOrder = 20 - i;
             tmpCard.backCanvas.sortingOrder = 20 - i;
-            tmpG[i].GetComponent<Card>().Setting(arr[i]);
-            // 카드 애니메이션 재생 중지하기
-            tmpG[i].GetComponent<Card>().anim.speed = 0f;
-            // 첫번째 카드가 가장 위로 가게 하기
-            tmpG[i].GetComponent<Card>().backSprite.sortingOrder = 20 - i;
-            tmpG[i].GetComponent<Card>().backCanvas.sortingOrder = 20 - i;
         }
 
 
