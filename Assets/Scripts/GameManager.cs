@@ -246,46 +246,69 @@ public class GameManager : MonoBehaviour
             secondCard.DestroyCard();
             cardCount -= 2;
 
-            //Debug.Log($"남은 카드 수: {cardCount}");
-            Combo++;
-            ComboTxt.text = Combo.ToString();
+                //Debug.Log($"남은 카드 수: {cardCount}");
+                Combo++;
+                ComboTxt.text = Combo.ToString();
+
+            switch (Combo)
+            {
+                case 1:
+                    ComboTxt.color = Color.red;
+                    break;
+                case 2:
+                    ComboTxt.color = Color.yellow;
+                    break;
+                case 3:
+                    ComboTxt.color = Color.blue;
+                    break;
+                case 4:
+                    ComboTxt.color = new Color(0.5f, 0f, 0.5f); 
+                    break;
+                case 5:
+                    ComboTxt.color = Color.green;
+                    break;
+                default:
+                    ComboTxt.color = Color.white; 
+                    break;
+            }
 
             if (cardCount == 0)
-            {
-                // 업적 띄우기
-                Invoke("ShowClearImageBasedOnTime", 1.5f);
-                // 마지막 스테이지
-                if (currentStageIndex + 1 >= totalStageCount)
                 {
-                                        //마지막 스테이지 완료 > 게임오버씬으로 전환
-                    progress = GameProgress.EndGame;
-                }
+                    // 업적 띄우기
+                    Invoke("ShowClearImageBasedOnTime", 1.5f);
+                    // 마지막 스테이지
+                    if (currentStageIndex + 1 >= totalStageCount)
+                    {
+                                            //마지막 스테이지 완료 > 게임오버씬으로 전환
+                        progress = GameProgress.EndGame;
+                    }
 
-                else
-                {
-                                       // 다음 스테이지 해금
-                    currentStageIndex++;
-                    /*PlayerPrefs.SetInt("StageUnlocked_" + (currentStageIndex + 1), 1);
-                    PlayerPrefs.Save();*/
-                    progress = GameProgress.SelectStage;
+                    else
+                    {
+                                           // 다음 스테이지 해금
+                        currentStageIndex++;
+                        /*PlayerPrefs.SetInt("StageUnlocked_" + (currentStageIndex + 1), 1);
+                        PlayerPrefs.Save();*/
+                        progress = GameProgress.SelectStage;
                     
+                    }
+                    // 넘어가는 유예시간 주기
+                    //time = 0.0f;
                 }
-                // 넘어가는 유예시간 주기
-                time = 0.0f;
             }
-        }
-        else
-        {
-            firstCard.PlayErrorSount();
-            firstCard.CloseCard();
-            secondCard.CloseCard();
+            else
+            {
+                firstCard.PlayErrorSount();
+                firstCard.CloseCard();
+                secondCard.CloseCard();
 
-            Combo = 0;
-            ComboTxt.text = Combo.ToString();
+                Combo = 0;
+                ComboTxt.text = Combo.ToString();
+                ComboTxt.color = Color.white;
         }
-        firstCard = null;
-        secondCard = null;
-    }
+            firstCard = null;
+            secondCard = null;
+        }
 
 
 void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미지
@@ -340,7 +363,7 @@ void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미�
         return PlayerPrefs.GetInt("StageUnlocked_"+ stageIndex, 0) == 1;
     }
 
-    // 스테이지 로드 함수
+    // 스테이지 해금 함수
     public void RefreshButtonState()
     {
         //Debug.Log("currentStageIndex: " + currentStageIndex);

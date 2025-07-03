@@ -8,7 +8,7 @@ public class EndScripts : MonoBehaviour
 {
     public RectTransform creditText;
     public float speed = 130f;
-    public float endY = 1500f;
+    public float endY = 4000f;
     void Update()
     {
         if (creditText.anchoredPosition.y < endY)
