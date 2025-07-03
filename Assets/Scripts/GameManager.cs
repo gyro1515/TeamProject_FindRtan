@@ -271,7 +271,7 @@ public class GameManager : MonoBehaviour
                     
                 }
                 // 넘어가는 유예시간 주기
-                time = 0.0f;
+                //time = 0.0f;
             }
         }
         else
