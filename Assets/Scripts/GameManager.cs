@@ -340,7 +340,7 @@ void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미�
         return PlayerPrefs.GetInt("StageUnlocked_"+ stageIndex, 0) == 1;
     }
 
-    // 스테이지 로드 함수
+    // 스테이지 해금 함수
     public void RefreshButtonState()
     {
         //Debug.Log("currentStageIndex: " + currentStageIndex);
