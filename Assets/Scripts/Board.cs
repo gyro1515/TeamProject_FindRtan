@@ -13,9 +13,10 @@ public class Board : MonoBehaviour
 
     // 보간 사용을 위한 값 저장 배열
     List<Vector2> endV2;
-    List<Vector2> startV2;
     List<float> startRot;
     List<GameObject> tmpG;
+    // 시작 위치
+    [SerializeField] Vector2 startV2 = new Vector2(0f, -5f);
 
     //Lerp용 Time
     float lerpTime = 0.0f;
@@ -62,7 +63,6 @@ public class Board : MonoBehaviour
 
         // 새로운 방식, 카드 생성하고 원하는 위치에 뿌리기
         endV2 = new List<Vector2>();   // 도착 지점 저장용 배열
-        startV2 = new List<Vector2>(); // 시작 지점 저장용 배열
         startRot = new List<float>();  // 시작 회전 값 저장용 배열
         tmpG = new List<GameObject>(); // 카드 오브젝트 저장용 배열
 
@@ -77,8 +77,6 @@ public class Board : MonoBehaviour
 
             // 카드의 시작 위치는 한 점으로 세팅
             tmpG[i].transform.position = new Vector2(0f, -5f);
-            // 시작 위치 배열에 넣어주기
-            startV2.Add(tmpG[i].transform.position);
             // 시작 회전 배열에 넣어주기
             startRot.Add((float)i * 10 - 45f);
             // 시작 회전 게임 오브젝트에 설정하기
@@ -99,7 +97,6 @@ public class Board : MonoBehaviour
         // 기본은 왼쪽 아래부터 시작하지만,
         // 위치 정보 뒤집어서 오른쪽 위, 먼 곳부터 날리기, 
         endV2.Reverse();
-        startV2.Reverse();
     }
 
     // Update is called once per frame
@@ -133,7 +130,7 @@ public class Board : MonoBehaviour
                 float easedOut = 1 - Mathf.Pow(1 - t, 2);
 
                 // 위치 보간하여 이동하기
-                tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], easedOut);
+                tmpG[i].transform.position = Vector2.Lerp(startV2, endV2[i], easedOut);
                 // 회전 보간하여 회전하기
                 float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], easedOut); // 두 바퀴 회전 용
                 float nextZ = startRot[i] + angleOffset;
