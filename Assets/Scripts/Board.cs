@@ -100,6 +100,7 @@ public class Board : MonoBehaviour
             EndTheta.Add(tmpTheta);
             StartPosA.Add(new Vector2(0f + tmpR * Mathf.Cos(tmpTheta), -5f + tmpR * Mathf.Sin(tmpTheta)));
             tmpG[i].transform.position = new Vector2(0f + tmpR * Mathf.Cos(startTheta), -5f + tmpR * Mathf.Sin(startTheta));
+            tmpG[i].transform.rotation = Quaternion.Euler(0f, 0f, 180);
 
             // 시작 회전 배열에 넣어주기
             //startRot.Add((float)i * 10 - 45f);
