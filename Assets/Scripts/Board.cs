@@ -210,7 +210,7 @@ public class Board : MonoBehaviour
         {
             case SetCard.Ready:
                 lerpTime += Time.deltaTime;
-                if (lerpTime > 0.5f)
+                if (lerpTime >= 0.5f)
                 {
                     lerpTime = 0.0f;
                     setState = SetCard.Start;
