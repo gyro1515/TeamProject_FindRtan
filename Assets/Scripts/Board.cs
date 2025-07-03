@@ -107,7 +107,7 @@ public class Board : MonoBehaviour
                 // 회전 보간하여 회전하기
                 float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], easedOut); // 두 바퀴 회전 용
                 float nextZ = startRot[i] + angleOffset;
-                // 회전 적용하는 여러 방법
+                // 회전 적용
                 tmpG[i].transform.rotation = Quaternion.Euler(0f, 0f, nextZ);
             }
             if (lerpTime > cardTotalTime)
