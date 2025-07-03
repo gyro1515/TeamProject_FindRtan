@@ -103,21 +103,16 @@ public class Board : MonoBehaviour
                 float t = Mathf.Clamp01(tmpLerpTime); // 1을 넘어가면 오류난다
                 float easedOut = 1 - Mathf.Pow(1 - t, 2); // 기본은 제곱, 제곱 수 올릴 수록 처음에 빠르고, 마지막에 느려짐
                 // 위치 보간하여 이동하기
-                //tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], tmpLerpTime);
                 tmpG[i].transform.position = Vector2.Lerp(startV2[i], endV2[i], easedOut);
                 // 회전 보간하여 회전하기
-                //float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], tmpLerpTime); // 두 바퀴 회전 용
                 float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], easedOut); // 두 바퀴 회전 용
                 float nextZ = startRot[i] + angleOffset;
                 // 회전 적용하는 여러 방법
-                //tmpG[i].transform.localRotation = Quaternion.Euler(0f, 0f, nextZ);
                 tmpG[i].transform.rotation = Quaternion.Euler(0f, 0f, nextZ);
-                //tmpG[i].transform.localEulerAngles = new Vector3(0f, 0f, nextZ);
-                //tmpG[i].transform.eulerAngles = new Vector3(0f, 0f, nextZ);
             }
             if (lerpTime > cardTotalTime)
             {
-                lerpTime = -1f; // 업데이트 방지용
+                lerpTime = -1f; // 업데이트 방지
                 for (int i = 0; i < cardCnt; i++)
                 {
                     tmpG[i].GetComponent<Card>().anim.speed = 1.0f;
