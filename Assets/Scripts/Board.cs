@@ -270,7 +270,7 @@ public class Board : MonoBehaviour
                 }
 
                 // lerpTime이 총 카드 배치 시간을 넘어가면 -1로 설정하여 Update() 안되게 하기
-                if (lerpTime > cardTotalTime)
+                if (1.25f + lerpTime > cardTotalTime)
                 {
                     setState = SetCard.End;
                     // 카드 배치가 끝났다면 애니메이션을 재생시키고, 카드 클릭 가능하게 하기
