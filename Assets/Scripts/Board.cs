@@ -15,6 +15,7 @@ public class Board : MonoBehaviour
     List<Vector2> endV2;
     List<float> startRot;
     List<GameObject> tmpG;
+    List<Vector2> StartPosA;
     // 시작 위치
     [SerializeField] Vector2 startV2 = new Vector2(0f, -5f);
 
@@ -65,8 +66,43 @@ public class Board : MonoBehaviour
         endV2 = new List<Vector2>();   // 도착 지점 저장용 배열
         startRot = new List<float>();  // 시작 회전 값 저장용 배열
         tmpG = new List<GameObject>(); // 카드 오브젝트 저장용 배열
-
+        StartPosA = new List<Vector2>(); // 시작 지점 저장용 배열
+        // 또 다른 방식
         for (int i = 0; i < cardCnt; i++)
+        {
+            tmpG.Add(Instantiate(card, this.transform));
+
+            // 배치 위치 지정하기
+            float x = (i % 4) * 1.4f - 2.1f;
+            float y = (i / 4) * 1.4f - 3.0f;
+            endV2.Add(new Vector2(x, y));
+
+            // 카드의 시작 위치는 펼져진 모습으로
+            float tmpR = 0.6f;
+            float tmpTheta = 180 / (cardCnt - 1) * i * Mathf.Deg2Rad;
+            tmpG[i].transform.position = new Vector2(0f + tmpR * Mathf.Cos(tmpTheta), -5f + tmpR * Mathf.Sin(tmpTheta));
+
+            StartPosA.Add(tmpG[i].transform.position);
+            // 시작 회전 배열에 넣어주기
+            startRot.Add((float)i * 10 - 45f);
+            // 시작 회전 게임 오브젝트에 설정하기
+            tmpG[i].transform.Rotate(0f, 0f, startRot[i]);
+            Card tmpCard = tmpG[i].GetComponent<Card>();
+            // 카드에 인덱스, 사진 등 세팅해주기
+            tmpCard.Setting(arr[i]);
+            tmpCard.anim.speed = 0f;
+            tmpCard.backSprite.sortingOrder = 20 - i;
+            tmpCard.backCanvas.sortingOrder = 20 - i;
+            tmpG[i].GetComponent<Card>().Setting(arr[i]);
+            // 카드 애니메이션 재생 중지하기
+            tmpG[i].GetComponent<Card>().anim.speed = 0f;
+            // 첫번째 카드가 가장 위로 가게 하기
+            tmpG[i].GetComponent<Card>().backSprite.sortingOrder = 20 - i;
+            tmpG[i].GetComponent<Card>().backCanvas.sortingOrder = 20 - i;
+        }
+
+
+        /*for (int i = 0; i < cardCnt; i++)
         {
             tmpG.Add(Instantiate(card, this.transform));
 
@@ -93,7 +129,7 @@ public class Board : MonoBehaviour
             // 첫번째 카드가 가장 위로 가게 하기
             tmpG[i].GetComponent<Card>().backSprite.sortingOrder = 20 - i;
             tmpG[i].GetComponent<Card>().backCanvas.sortingOrder = 20 - i;
-        }
+        }*/
         // 기본은 왼쪽 아래부터 시작하지만,
         // 위치 정보 뒤집어서 오른쪽 위, 먼 곳부터 날리기, 
         endV2.Reverse();
@@ -130,7 +166,8 @@ public class Board : MonoBehaviour
                 float easedOut = 1 - Mathf.Pow(1 - t, 2);
 
                 // 위치 보간하여 이동하기
-                tmpG[i].transform.position = Vector2.Lerp(startV2, endV2[i], easedOut);
+                //tmpG[i].transform.position = Vector2.Lerp(startV2, endV2[i], easedOut); // 방식1
+                tmpG[i].transform.position = Vector2.Lerp(StartPosA[i], endV2[i], easedOut); // 방식2
                 // 회전 보간하여 회전하기
                 float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], easedOut); // 두 바퀴 회전 용
                 float nextZ = startRot[i] + angleOffset;
