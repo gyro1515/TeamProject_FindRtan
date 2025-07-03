@@ -5,6 +5,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static GameManager;
 
 public class Board : MonoBehaviour
 {
@@ -18,7 +19,6 @@ public class Board : MonoBehaviour
 
     // 보간 사용을 위한 값 저장 배열
     List<Vector2> endV2;
-    List<float> startRot;
     List<GameObject> tmpG;
     List<Vector2> StartPosA;
     // 시작 위치
@@ -37,7 +37,7 @@ public class Board : MonoBehaviour
     // 사운드 속도
     [SerializeField] float pitchSpeed = 3.5f;
     // 카드 뿌리는 간격
-    [SerializeField] float cardTime = 0.5f;
+    [SerializeField] float cardTime = 0.25f;
     // 카드 날아가는 총 시간
     public float cardTotalTime = 5.5f;
     // 카드 총 개수
@@ -53,7 +53,7 @@ public class Board : MonoBehaviour
         }
         // 날아가는 시간 세팅
         // 카드 날리는 간격 * 카드 인덱스만큼 + 날아가는 시간
-        cardTotalTime = cardTime * (cardCnt - 1) + 1.0f + 1.25f;
+        cardTotalTime = cardTime * (cardCnt - 1) + 1.0f;
     }
     void Start()
     {
@@ -66,7 +66,6 @@ public class Board : MonoBehaviour
 
         // 새로운 방식, 카드 생성하고 원하는 위치에 뿌리기
         endV2 = new List<Vector2>();   // 도착 지점 저장용 배열
-        startRot = new List<float>();  // 시작 회전 값 저장용 배열
         EndTheta = new List<float>();  // 끝 위치 회전 값 저장용 배열
         tmpG = new List<GameObject>(); // 카드 오브젝트 저장용 배열
         StartPosA = new List<Vector2>(); // 시작 지점 저장용 배열
@@ -85,14 +84,10 @@ public class Board : MonoBehaviour
             EndTheta.Add(tmpTheta);
             StartPosA.Add(new Vector2(0f + tmpR * Mathf.Cos(tmpTheta), -5f + tmpR * Mathf.Sin(tmpTheta)));
             tmpG[i].transform.position = new Vector2(0f + tmpR * Mathf.Cos(startTheta), -5f + tmpR * Mathf.Sin(startTheta));
+
             // 모두 거꾸로 회전해서 시작, 그래야 펼쳤을 때, 맨 위의 카드가 정면
             tmpG[i].transform.rotation = Quaternion.Euler(0f, 0f, 180); 
 
-            // 시작 회전 배열에 넣어주기
-            //startRot.Add((float)i * 10 - 45f);
-            startRot.Add(180.0f / (cardCnt - 1) * i);
-            // 시작 회전 게임 오브젝트에 설정하기
-            //tmpG[i].transform.Rotate(0f, 0f, startRot[i]);
             Card tmpCard = tmpG[i].GetComponent<Card>();
             // 카드에 인덱스, 사진 등 세팅해주기
             tmpCard.Setting(arr[i]);
@@ -164,17 +159,19 @@ public class Board : MonoBehaviour
                     // 위치 보간하여 이동하기
                     tmpG[i].transform.position = Vector2.Lerp(StartPosA[i], endV2[i], easedOut); // 방식2
                                                                                                  // 회전 보간하여 회전하기
-                    float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], easedOut); // 두 바퀴 회전 용
-                    float nextZ = startRot[i] + angleOffset;
+                    // 회전 보간하기, 0도에서 720도 회전, 실제로는 720도 - 카드 날리기 전 각도
+                    float thetaOffset = Mathf.Lerp(0f, 4 * Mathf.PI - EndTheta[i], easedOut); // 두 바퀴 회전 용
+                    float nextZ = (EndTheta[i] + thetaOffset) * Mathf.Rad2Deg;
                     // 회전 적용
                     tmpG[i].transform.rotation = Quaternion.Euler(0f, 0f, nextZ);
                 }
 
                 // lerpTime이 총 카드 배치 시간을 넘어가면 -1로 설정하여 Update() 안되게 하기
-                // Ready + Start = 1.25초 소요
-                if (1.25f + lerpTime >= cardTotalTime)
+                if (lerpTime >= cardTotalTime)
                 {
                     setState = SetCard.End;
+                    // 시간 초 재생
+                    GameManager.instance.progress = GameProgress.StartGame;
                     // 카드 배치가 끝났다면 애니메이션을 재생시키고, 카드 클릭 가능하게 하기
                     for (int i = 0; i < cardCnt; i++)
                     {

@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        SetTimeToStartTime();
         if (instance == null)
         {
             instance = this;
@@ -118,10 +119,10 @@ public class GameManager : MonoBehaviour
             //Debug.Log("No");
         }
         progress = GameProgress.SettingCard;
-        if (curBoard)
+        /*if (curBoard)
         {
             setCardTime = curBoard.cardTotalTime;
-        }
+        }*/
     }
 
     void Update()
@@ -134,13 +135,7 @@ public class GameManager : MonoBehaviour
         switch (progress)
         {
             case GameProgress.SettingCard:
-                time += Time.deltaTime;
-                if (time >= setCardTime)
-                {
-                    time = startTime;
-                    progress = GameProgress.StartGame;
-                    //Debug.Log(time);
-                }
+                // Board에서 카드 배치가 끝나면, 상태 변경됨
                 break;
             case GameProgress.EndGame:
                 Invoke("EndGame", 3.0f);
@@ -432,6 +427,10 @@ void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미�
         }
         instance.stageButtons = stageButtons;
         instance.isFirstSetStageBtn = isFirstSetStageBtn;
+    }
+    public void SetTimeToStartTime()
+    {
+        time = startTime;
     }
     /*private void OnDestroy()
     {
