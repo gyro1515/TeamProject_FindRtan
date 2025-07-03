@@ -119,16 +119,16 @@ public class Board : MonoBehaviour
                 }
                 break;
             case SetCard.Start:
-                lerpTime += Time.deltaTime * 2;
+                lerpTime += Time.deltaTime;
                 for (int i = 0; i < cardCnt; i++)
                 {
-                    float targetTheta = Mathf.Lerp(startTheta, EndTheta[i], lerpTime);
+                    float targetTheta = Mathf.Lerp(startTheta, EndTheta[i], lerpTime * 2);
                     tmpG[i].transform.position = new Vector2(0f + tmpR * Mathf.Cos(targetTheta), -5f + tmpR * Mathf.Sin(targetTheta));
                     float nextZ = targetTheta * Mathf.Rad2Deg;
                     // 회전 적용
                     tmpG[i].transform.rotation = Quaternion.Euler(0f, 0f, nextZ);
                 }
-                if (lerpTime >= 1.5f)
+                if (lerpTime >= 0.75f)
                 {
                     setState = SetCard.Throw;
                     sound.Play();
@@ -162,7 +162,6 @@ public class Board : MonoBehaviour
                     float easedOut = 1 - Mathf.Pow(1 - t, 2);
 
                     // 위치 보간하여 이동하기
-                    //tmpG[i].transform.position = Vector2.Lerp(startV2, endV2[i], easedOut); // 방식1
                     tmpG[i].transform.position = Vector2.Lerp(StartPosA[i], endV2[i], easedOut); // 방식2
                                                                                                  // 회전 보간하여 회전하기
                     float angleOffset = Mathf.Lerp(0f, 720f - startRot[i], easedOut); // 두 바퀴 회전 용
@@ -172,6 +171,7 @@ public class Board : MonoBehaviour
                 }
 
                 // lerpTime이 총 카드 배치 시간을 넘어가면 -1로 설정하여 Update() 안되게 하기
+                // Ready + Start = 1.25초 소요
                 if (1.25f + lerpTime >= cardTotalTime)
                 {
                     setState = SetCard.End;
