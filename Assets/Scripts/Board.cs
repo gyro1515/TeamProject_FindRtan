@@ -94,7 +94,7 @@ public class Board : MonoBehaviour
             // 카드 뿌려보기
             for (int i = 0; i < cardCnt; i++)
             {
-                int tmpI = cardTime == 0.0f ? cardCnt : (int)(lerpTime / cardTime); // cardTime이 0이라면 바로 다 나가도록
+                int tmpI = cardTime == 0.0f ? cardCnt : (int)(lerpTime / cardTime); // cardTime이 0이라면 바로 다 나가도록 
                 if (tmpI < i) return;
 
                 // 실제 보간용 float 변수
