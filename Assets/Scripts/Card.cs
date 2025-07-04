@@ -38,7 +38,6 @@ public class Card : MonoBehaviour
     {
         idx = num;
         frontImg.sprite = Resources.Load<Sprite>(idx.ToString());
-        //frontImg.sprite = Resources.Load<Sprite>($"{idx}");
         //Debug.Log("card setting");
     }
 

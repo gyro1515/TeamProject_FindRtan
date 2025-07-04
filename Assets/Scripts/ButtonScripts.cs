@@ -14,9 +14,6 @@ public class ButtonScripts : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-
-
-
     public void StartToMain1()
     {
         SceneManager.LoadScene("MainScene1");
@@ -39,11 +36,6 @@ public class ButtonScripts : MonoBehaviour
     public void GoToNextStage()
     {
         Time.timeScale = 1.0f;
-        // GameManager의 currentStageIndex 값 사용
-        //GameManager.instance.currentStageIndex++;
-        //int nextStage = GameManager.instance.currentStageIndex + 1;
-        //string nextSceneName = "MainScene" + nextStage;
-        //SceneManager.LoadScene(nextSceneName);
         SceneManager.LoadScene("MainScene2");
     }
     //GameOverScene으로 이동
