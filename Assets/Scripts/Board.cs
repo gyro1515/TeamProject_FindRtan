@@ -18,15 +18,14 @@ public class Board : MonoBehaviour
     public GameObject card;
 
     // 보간 사용을 위한 값 저장 배열
-    List<Vector2> endV2;
-    List<GameObject> tmpG;
-    List<Vector2> StartPosA;
+    List<Vector2> endV2; // 날아갈 위치
+    List<GameObject> tmpG; // 카드 오브젝트 저장
+    List<Vector2> StartPosA; // 펼쳐질 위치 저장
+    List<float> EndTheta; // 끝 위치 각도
     // 시작 위치
     [SerializeField] Vector2 startV2 = new Vector2(0f, -5f);
     // 시작 위치 각도
     float startTheta = Mathf.PI;
-    // 끝 위치 각도
-    List<float> EndTheta;
     //Lerp용 Time
     float lerpTime = 0.0f;
     // 반지름
@@ -118,7 +117,7 @@ public class Board : MonoBehaviour
                 for (int i = 0; i < cardCnt; i++)
                 {
                     float targetTheta = Mathf.Lerp(startTheta, EndTheta[i], lerpTime * 2);
-                    tmpG[i].transform.position = new Vector2(0f + tmpR * Mathf.Cos(targetTheta), -5f + tmpR * Mathf.Sin(targetTheta));
+                    tmpG[i].transform.position = new Vector2(startV2.x + tmpR * Mathf.Cos(targetTheta), startV2.y + tmpR * Mathf.Sin(targetTheta));
                     float nextZ = targetTheta * Mathf.Rad2Deg;
                     // 회전 적용
                     tmpG[i].transform.rotation = Quaternion.Euler(0f, 0f, nextZ);
