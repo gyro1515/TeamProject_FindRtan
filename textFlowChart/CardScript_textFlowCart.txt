@@ -1,0 +1,38 @@
+[Start()]
+ └─> AudioSource 초기화
+
+[Setting(num)]
+ └─> idx 할당
+ └─> frontImg.sprite = Resources.Load<Sprite>(num)
+
+[OpenCard()]          ※ 사용자 클릭 시 호출
+ ├─ if GameManager.progress != StartGame → return
+ ├─ if cardState == Fly → return
+ ├─ 효과음 재생 (flipClip)
+ ├─ 애니메이션 "IsOpen" → true
+ ├─ back 비활성화 / front 활성화
+ ├─ if GameManager.firstCard == null
+ │     └─> firstCard = this
+ └─ else
+       └─> secondCard = this
+       └─> GameManager.Matched() 호출
+
+[DestroyCard()]
+ └─> 1초 후 DestroyCardInvoke() 호출
+      └─> Destroy(gameObject)
+
+[CloseCard()]
+ └─> 1초 후 CloseCardInvoke() 호출
+      ├─ front 비활성화
+      ├─ back 활성화
+      └─ 애니메이션 "IsOpen" → false
+
+[OpenCardReady()]
+ └─> 0.2초 후 OpenCardInvoke() 호출
+      └─ back 비활성화, front 활성화
+
+[PlayCorrectSound()]
+ └─> 효과음 재생 (correctClip)
+
+[PlayErrorSount()]   ← 오타: PlayErrorSount → PlayErrorSound
+ └─> 효과음 재생 (errorClip)

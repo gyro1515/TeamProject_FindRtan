@@ -1,0 +1,31 @@
+[SelectToStage()]
+ ├─ GameManager.instance.selectPanel → 비활성화
+ └─ "StageScene" 로드
+
+[RetryButton()]
+ └─ 현재 씬 재로드
+
+[StartToMain1()]
+ └─ "MainScene1" 로드
+
+[StartToMain2()]
+ └─ "MainScene2" 로드
+
+[MainToGameOver()]
+ └─ "GameOverScene" 로드
+
+[LoadRetryScene()]
+ └─ "StartScene" 로드
+
+[GoToNextStage()]
+ ├─ Time.timeScale = 1.0f
+ └─ "MainScene2" 로드 (※ 고정값, 동적 전환은 주석처리됨)
+
+[GoToGameOverScene()]
+ └─ "GameOverScene" 로드
+
+[GoToStageSelect()]
+ ├─ PlayerPrefs "StageUnlocked_1" 삭제
+ ├─ PlayerPrefs 저장
+ ├─ Time.timeScale = 1.0f
+ └─ "StageScene" 로드

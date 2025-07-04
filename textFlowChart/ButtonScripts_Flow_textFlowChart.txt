@@ -1,0 +1,7 @@
+[ButtonScripts]
+├─ SelectToStage() → StageScene
+├─ RetryButton() → 현재 씬 재시작
+├─ StartToMain1(), StartToMain2() → MainScene1,2
+├─ MainToGameOver(), GoToGameOverScene() → GameOverScene
+├─ LoadRetryScene() → StartScene
+└─ GoToNextStage() → MainScene2 (※ 현재 하드코딩)

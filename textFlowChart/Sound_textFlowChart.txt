@@ -1,0 +1,54 @@
+┌────────────┐
+│   Awake()  │
+└────┬───────┘
+     │
+     ▼
+Is instance null?
+ ┌──────────────┐       ┌──────────────────────┐
+ │ Yes          │       │ No                   │
+ │ Set instance │◄──────┤ CopyToGameInstance() │
+ │ DontDestroy  │       │ Destroy this object  │
+ └────┬─────────┘       └────────┬──────────────┘
+      │                          │
+      ▼                          ▼
+Start()                    BGM 상태에 따라:
+                          - normalBGM 재생 또는
+                          - warningBGM 정지 후 normalBGM 재생
+  │
+  ▼
+bgmAudioSource 설정 및 normalBGM 재생
+
+──────────────────────────────────────────────────────────────
+
+              ▼
+        Update()
+              │
+              ▼
+    progress == StartGame ?
+
+              ▼
+         Time <= 10초 ?
+        ┌──────────────┐
+        │ Yes          │
+        │ BGM 정지     │
+        │ warningBGM 재생 │
+        │ isWarning = true │
+        └──────┬───────┘
+               │ No
+               ▼
+   Time > 10초 && isWarning == true ?
+        ┌──────────────┐
+        │ Yes          │
+        │ BGM 정지     │
+        │ normalBGM 재생 │
+        │ isWarning = false│
+        └──────────────┘
+
+──────────────────────────────────────────────────────────────
+
+              ▼
+progress == EndGame or Failed ?
+        ┌──────────────┐
+        │ Yes          │
+        │ BGM 정지     │
+        └──────────────┘

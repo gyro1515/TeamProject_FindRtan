@@ -8,7 +8,6 @@ public class Card2 : Card // 카드 상속 받아서 카드에 있는 값들 그
     // 카드가 열렸는가? 열리는 중이어도 OpenCard()작동 안되게
     bool tmpIsOpen = false;
     
-
     // 게임 매니저씬에서 가져와야 함
     public override void OpenCard() // 오버라이드 함수
     {
@@ -23,8 +22,6 @@ public class Card2 : Card // 카드 상속 받아서 카드에 있는 값들 그
         //PlayOneShot()을 사용하면 다른 효과음끼리 겹치지 않음
         audioSource.PlayOneShot(flipClip);
         anim.SetBool("IsOpen", true);
-        /*back.SetActive(false);
-        front.SetActive(true);*/
 
         // 만약 fisrstCard가 비었다면
         if (GameManager.instance.firstCard == null)

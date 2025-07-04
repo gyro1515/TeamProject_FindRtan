@@ -1,0 +1,5 @@
+[Update()] ← 매 프레임 실행
+ ├─ if (creditText.y < endY)
+ │    └─ creditText 위로 이동 (Y축 += speed × Δtime)
+ └─ else
+      └─ "StartScene" 로드 (씬 전환)

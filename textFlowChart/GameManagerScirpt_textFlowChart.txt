@@ -1,0 +1,70 @@
+[Awake()]
+ ├─ 싱글턴 인스턴스 설정
+ ├─ if 중복 인스턴스:
+ │    └─ 기존 인스턴스에 데이터 복사 후 Destroy(this)
+ ├─ 배경음(BGM) 상태 복구 및 재생
+
+[Start()]
+ ├─ bgmAudioSource 초기화 및 normalBGM 재생
+ └─ progress = SettingCard
+
+[Update()] ← 매 프레임 실행
+ ├─ if 첫 프레임 → [RefreshButtonState()]
+ ├─ switch(progress)
+ │
+ ├─ [SettingCard]
+ │    └─ 카드 배치 중 (Board가 완료하면 상태 전환)
+ │
+ ├─ [StartGame]
+ │    ├─ time 감소
+ │    ├─ 시간에 따라 timeTxt 색상 변경
+ │    ├─ 경고 음악으로 전환 (10초 이하)
+ │    └─ if time <= 0 → progress = Failed
+ │
+ ├─ [Failed]
+ │    ├─ Retry 버튼 활성화
+ │    └─ 텍스트: "시간 초과!"
+ │
+ ├─ [EndGame]
+ │    └─ 3초 후 [EndGame()] 호출 → GameOverScene 전환
+ │
+ ├─ [SelectStage]
+ │    └─ 4초 후 [SelectStage()] 호출 → selectPanel 활성화
+ │
+ └─ [Finish]
+      └─ 아무 작업 없음
+
+ ▼
+
+[Matched()] ← Card.OpenCard()에서 호출
+ ├─ if 카드 일치:
+ │    ├─ 두 카드 제거
+ │    ├─ Combo 증가 + Combo 텍스트 색상 변경
+ │    ├─ if 카드 전부 제거:
+ │    │    ├─ 클리어 이미지 출력 (ShowClearImageBasedOnTime)
+ │    │    ├─ if 마지막 스테이지 → progress = EndGame
+ │    │    └─ else → 다음 스테이지 해금 + progress = SelectStage
+ └─ else (카드 불일치)
+      ├─ 두 카드 다시 뒤집기
+      └─ Combo 리셋
+
+ ▼
+
+[ShowClearImageBasedOnTime()]
+ └─ 클리어 시간에 따라 이미지(fast, normal, slow) 출력
+
+[SelectStage()]
+ └─ selectPanel 활성화
+
+[GoToGameOver()]
+ └─ GameOverScene으로 씬 전환
+
+[RefreshButtonState()]
+ ├─ 각 스테이지 버튼 활성/비활성
+ └─ 클릭 리스너 등록 → [LoadStage()]
+
+[LoadStage(stageNumber)]
+ └─ currentStageIndex 설정 후 MainSceneN 로드
+
+[CopyToGameInstance()]
+ └─ 인스턴스 변수 값 복사

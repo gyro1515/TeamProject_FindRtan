@@ -11,7 +11,6 @@ using UnityEditor.Experimental.GraphView;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    //public AudioSource bgmAudioSource;
     AudioSource bgmAudioSource;
     public AudioClip normalBGM;
     public AudioClip warningBGM;
@@ -22,7 +21,6 @@ public class GameManager : MonoBehaviour
     public RawImage videoDisplay;
     public VideoPlayer videoPlayer;
     public VideoClip[] endingVideos;
-    public Board curBoard;
 
     //스테이지 선택 버튼 구조체
     [System.Serializable]
@@ -32,7 +30,6 @@ public class GameManager : MonoBehaviour
         public int stageNumber;
     }
     // 스테이지 선택 버튼 배열
-    //public StageButton[] stageButtons;
     public StageButton[] stageButtons = new StageButton[2];
 
     private bool isWarningBGMPlaying = false;
@@ -62,11 +59,10 @@ public class GameManager : MonoBehaviour
     float time = 0.0f;
     bool gameOverTriggered = false;
     private bool Win = false;
-    // 카드 배치 시간, CopyToGameInstace()에서 자동으로 설정 됨
-    float setCardTime = 0.0f;
 
     private void Awake()
     {
+        SetTimeToStartTime();
         if (instance == null)
         {
             instance = this;
@@ -101,7 +97,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         // Awake()에서 Destroy시 Start()실행 안됨
-        
+
         bgmAudioSource = GetComponent<AudioSource>();
         //Debug.Log("Setting");
 
@@ -118,10 +114,6 @@ public class GameManager : MonoBehaviour
             //Debug.Log("No");
         }
         progress = GameProgress.SettingCard;
-        if (curBoard)
-        {
-            setCardTime = curBoard.cardTotalTime;
-        }
     }
 
     void Update()
@@ -134,13 +126,7 @@ public class GameManager : MonoBehaviour
         switch (progress)
         {
             case GameProgress.SettingCard:
-                time += Time.deltaTime;
-                if (time >= setCardTime)
-                {
-                    time = startTime;
-                    progress = GameProgress.StartGame;
-                    //Debug.Log(time);
-                }
+                // Board에서 카드 배치가 끝나면, 상태 변경됨
                 break;
             case GameProgress.EndGame:
                 Invoke("EndGame", 3.0f);
@@ -246,9 +232,9 @@ public class GameManager : MonoBehaviour
             secondCard.DestroyCard();
             cardCount -= 2;
 
-                //Debug.Log($"남은 카드 수: {cardCount}");
-                Combo++;
-                ComboTxt.text = Combo.ToString();
+            //Debug.Log($"남은 카드 수: {cardCount}");
+            Combo++;
+            ComboTxt.text = Combo.ToString();
 
             switch (Combo)
             {
@@ -274,26 +260,21 @@ public class GameManager : MonoBehaviour
 
             if (cardCount == 0)
                 {
-                    // 업적 띄우기
+                    // 일정 시간 후 업적 띄우기
                     Invoke("ShowClearImageBasedOnTime", 1.5f);
-                    // 마지막 스테이지
+                    // 스테이지 체크
                     if (currentStageIndex + 1 >= totalStageCount)
                     {
-                                            //마지막 스테이지 완료 > 게임오버씬으로 전환
+                        //마지막 스테이지 완료 > 게임오버씬으로 전환
                         progress = GameProgress.EndGame;
                     }
-
                     else
                     {
-                                           // 다음 스테이지 해금
+                        // 다음 스테이지 해금
                         currentStageIndex++;
-                        /*PlayerPrefs.SetInt("StageUnlocked_" + (currentStageIndex + 1), 1);
-                        PlayerPrefs.Save();*/
                         progress = GameProgress.SelectStage;
                     
                     }
-                    // 넘어가는 유예시간 주기
-                    //time = 0.0f;
                 }
             }
             else
@@ -343,20 +324,7 @@ void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미�
         normalImage.SetActive(false);
         slowImage.SetActive(false);
     }
-    // 코루틴 함수 추가
-    private IEnumerator ShowSelectPanelWithDelay()
-    {
-        //타임스케일이 0이라도 돌아가는 리얼타임 대기
-        yield return new WaitForSeconds(1f); 
-        if (selectPanel != null) selectPanel.SetActive(true);
-        //Time.timeScale = 0.0f; // 게임 멈춤
-
-
-    //Scene 전환방식(예: StageScene으로)
-       
-    }
-
-
+    
     public bool IsStageUnlocked(int stageIndex)
     {
         if (stageIndex == 0) return true;
@@ -411,7 +379,6 @@ void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미�
         instance.normalImage = normalImage;
         instance.slowImage = slowImage;
         instance.isWarningBGMPlaying = isWarningBGMPlaying;
-        //instance.currentStageIndex = currentStageIndex;
         instance.totalStageCount = totalStageCount;
         instance.selectPanel = selectPanel;
         instance.progress = progress;
@@ -425,13 +392,12 @@ void ShowClearImageBasedOnTime()//클리어타임에 따라 보여지는 이미�
         instance.time = time;
         instance.gameOverTriggered = gameOverTriggered;
         instance.Win = Win;
-        if (curBoard != null)
-        {
-            instance.curBoard = curBoard;
-            instance.setCardTime = instance.curBoard.cardTotalTime;
-        }
         instance.stageButtons = stageButtons;
         instance.isFirstSetStageBtn = isFirstSetStageBtn;
+    }
+    public void SetTimeToStartTime()
+    {
+        time = startTime;
     }
     /*private void OnDestroy()
     {
