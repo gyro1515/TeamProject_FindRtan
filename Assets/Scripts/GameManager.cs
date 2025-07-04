@@ -59,8 +59,6 @@ public class GameManager : MonoBehaviour
     float time = 0.0f;
     bool gameOverTriggered = false;
     private bool Win = false;
-    // 카드 배치 시간, CopyToGameInstace()에서 자동으로 설정 됨
-    float setCardTime = 0.0f;
 
     private void Awake()
     {
