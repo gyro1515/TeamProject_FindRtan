@@ -1,0 +1,45 @@
+[Start]
+   ↓
+[Awake()]
+ - AudioSource 초기화
+ - cardTotalTime 계산
+   ↓
+[Start()]
+ - 카드 인덱스 배열 셔플
+ - 카드 오브젝트 생성 및 초기 세팅
+   ↓
+[Update()]
+   ↓
+[SetCard 상태 확인]
+ ┌────────────────────────────────────────────────────┐
+ │ enum SetCard { Ready, Start, Throw, End }          │
+ └────────────────────────────────────────────────────┘
+   ↓
+
+▶ if 상태 == Ready:
+   - lerpTime += deltaTime
+   - 0.5초 이상이면 상태 → Start
+   ↓
+
+▶ if 상태 == Start:
+   - lerpTime += deltaTime
+   - 각 카드의 위치/회전을 Lerp로 보간
+   - 0.75초 이상이면 상태 → Throw, 사운드 재생
+   ↓
+
+▶ if 상태 == Throw:
+   - lerpTime += deltaTime
+   - 현재 시간에 따라 각 카드의 위치와 회전을 개별 보간
+   - cardTime 간격으로 카드가 순차적으로 날아감
+   - 보간: EaseOut(1 - (1-t)²) 방식
+   - 모든 카드 배치 완료 시:
+       - 상태 → End
+       - GameProgress → StartGame
+       - 카드 애니메이션 재생
+       - 카드 클릭 가능 상태로 변경
+   ↓
+
+▶ if 상태 == End:
+   - 더 이상 Update 처리 없음
+   ↓
+[End]

@@ -1,0 +1,82 @@
+[Game 실행]
+
+┌────────────┐
+│ StartScene │ → 버튼 클릭
+└────────────┘
+        ↓
+┌──────────────┐
+│ StageScene   │ ← GoToStageSelect()
+└──────────────┘
+        ↓
+┌────────────────┐
+│ MainScene1~N   │ ← GameManager에서 관리
+└────────────────┘
+
+(GameManager.Awake)
+├─ GameManager.instance 초기화
+├─ BGM 재생 (normalBGM)
+└─ Time 초기화 (SetTimeToStartTime)
+
+(GameManager.Start)
+├─ BGM 설정 및 재생
+└─ GameProgress = SettingCard
+
+        ↓
+[Board.Start] : 카드 생성 및 배치 시작
+├─ 카드 prefab 12장 생성
+├─ 카드 섞기 (랜덤 인덱스)
+├─ 보간 위치 설정 (중심에서 퍼지기 방식)
+└─ Card.Setting(idx) → 카드 이미지 세팅 및 상태 초기화
+
+        ↓
+[Board.Update] : 상태머신
+├─ [Ready] → 0.5초 대기 후 [Start] 전환
+├─ [Start] → 카드 반원 펼침
+│    └─ 소리 재생 후 [Throw] 전환
+├─ [Throw] → 카드 위치 보간하여 날림 (Lerp + EaseOut)
+│    └─ 완료 후 [End] 전환 및 GameProgress.StartGame
+└─ [End] → 카드 클릭 가능 상태로 변경
+
+        ↓
+[사용자 카드 클릭] (Card.OpenCard)
+├─ GameManager.progress가 StartGame인지 확인
+├─ 상태가 Fly일 경우 무시
+├─ 카드 뒤집기 애니메이션 + 사운드 재생
+├─ 카드 정보 GameManager에 전달
+│    ├─ firstCard 비어 있으면 → firstCard로 저장
+│    └─ 이미 있으면 → secondCard로 저장 후 Matched() 호출
+
+        ↓
+[GameManager.Matched]
+├─ 카드 인덱스 비교
+│    ├─ 일치: 카드 제거, Combo 증가
+│    │    └─ 카드 전부 제거되면 스테이지 클리어
+│    │          ├─ 마지막 스테이지: GameProgress.EndGame
+│    │          └─ 그 외: GameProgress.SelectStage
+│    └─ 불일치: 카드 닫기, Combo 리셋
+└─ 카드 상태 초기화
+
+        ↓
+[GameManager.Update]
+├─ GameProgress 상태 체크
+│    ├─ SettingCard: 대기
+│    ├─ StartGame: 시간 감소, 텍스트 색상 변경, 경고 BGM 처리
+│    ├─ Failed: 시간초과 → Retry 버튼 활성화
+│    ├─ SelectStage: 4초 후 스테이지 선택 패널 표시
+│    └─ EndGame: 3초 후 엔딩 처리
+
+        ↓
+[GameManager.ShowClearImageBasedOnTime]
+├─ 클리어 시간에 따라 이미지 노출
+│    ├─ >20초: 빠른 클리어
+│    ├─ >10초: 보통
+│    └─ 이하: 느린 클리어
+└─ 2초 후 HideImage
+
+        ↓
+[GameManager.GoToGameOver()] → GameOverScene 로드
+
+        ↓
+[EndScripts.Update()] (GameOverScene)
+├─ 크레딧 텍스트 위로 이동
+└─ 일정 위치 도달 → StartScene 로드
