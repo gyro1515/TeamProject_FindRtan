@@ -54,7 +54,7 @@
 
 ## 🔧 기술 스택
 
-- **Unity** (2022.x 이상)
+- **Unity** (2022.3.17f1)
 - **C#** (MonoBehaviour 기반)
 - **GitHub** (버전 관리 및 협업)
 - **Photoshop / Illustrator** (카드 디자인, UI 에셋)
